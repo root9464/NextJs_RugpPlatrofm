@@ -14,7 +14,7 @@ declare module 'react-aria-components' {
 
 const TonConnectUIProvider = dynamic(() => import('@tonconnect/ui-react').then((mod) => mod.TonConnectUIProvider), { ssr: false });
 
-export function GlobalProvider({ children }: { children: Readonly<ReactNode> }) {
+export function GlobalProvider({ children, ...props }: { children: Readonly<ReactNode> }) {
   const router = useRouter();
   const [queryClient] = useState(
     () =>
@@ -31,7 +31,7 @@ export function GlobalProvider({ children }: { children: Readonly<ReactNode> }) 
   return (
     <RouterProvider navigate={router.push}>
       <TonConnectUIProvider manifestUrl='https://taiga-labs.github.io/dexlot.json'>
-        <NextThemesProvider enableSystem attribute='class'>
+        <NextThemesProvider enableSystem storageKey='justd-theme' {...props}>
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         </NextThemesProvider>
       </TonConnectUIProvider>
