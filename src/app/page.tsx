@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui';
+import { PageLayout } from '@components/layouts/page.layout';
 
 export default function Home() {
   return (
-    <div className='p-4 pt-2'>
-      <h1 className='bg-epta text-white'>Home</h1>
-      <Button>Button</Button>
-    </div>
+    <PageLayout className='grid grid-cols-[73%_27%]'>
+      <h1>fff</h1>
+      <h1>ccc</h1>
+    </PageLayout>
   );
 }

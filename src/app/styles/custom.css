@@ -1,3 +1,9 @@
 @theme {
   --color-epta: rgb(255, 0, 153);
+
+  --color-uiPrimaryBg: rgba(5, 8, 14, 1);
+  --color-uiSecondaryBg: rgba(9, 12, 20, 1);
+
+  --color-uiPrimaryText: rgba(230, 230, 230, 1);
+  --color-uiSecondaryText: rgba(65, 74, 96, 1);
 }

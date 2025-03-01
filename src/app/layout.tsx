@@ -1,4 +1,6 @@
 import { GlobalProvider } from '@/components/providers/global.provider';
+import { Sidebar } from '@/components/sidebar';
+import { Topbar } from '@/components/topbar';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
@@ -24,7 +26,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang='en'>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <GlobalProvider>{children}</GlobalProvider>
+        <GlobalProvider>
+          <Topbar />
+          <Sidebar />
+          {children}
+        </GlobalProvider>
       </body>
     </html>
   );

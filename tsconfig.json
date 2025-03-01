@@ -22,6 +22,7 @@
       "@shared/*": ["./src/shared/*"],
       "@components/*": ["./src/components/*"],
       "@modules/*": ["./src/modules/*"],
+      "@assets/*": ["./src/assets/*"],
       "@ui/*": ["./src/components/ui/*"]
     }
   },

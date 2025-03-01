@@ -38,8 +38,7 @@
   }
 
   body {
-    background-color: var(--bg);
-    color: var(--fg);
+    @apply bg-uiPrimaryBg text-uiPrimaryText no-underline w-full min-h-screen h-full
   }
 
   ::-webkit-scrollbar {
