@@ -1,8 +1,8 @@
+import { tonApiInstance } from '@shared/lib/axios';
+import { validateResult } from '@shared/utils/utils';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import { z } from 'zod';
-import { tonApiInstance } from '../lib/axios';
-import { validateResult } from '../utils/utils';
 
 const ExtraBalanceSchema = z.object({
   amount: z.string(),
@@ -91,11 +91,11 @@ export const useUserBalance = (address: string) =>
         throw new Error(`API fetch failed: ${error.message}`);
       });
 
-      const account = validateResult(accountResponse.data, AccountSchema);
+      const account = accountResponse && validateResult(accountResponse.data, AccountSchema);
 
       if (!account) throw new Error('Failed to fetch account data.');
 
-      const jettons = validateResult(jettonsResponse.data, JettonsSchema);
+      const jettons = jettonsResponse && validateResult(jettonsResponse.data, JettonsSchema);
 
       const tonBalance = {
         balance: account.balance / 10 ** 9,
