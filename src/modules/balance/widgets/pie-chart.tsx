@@ -62,7 +62,7 @@ export const PieChartWidget = ({ tokens, isFullScreen = false }: PieChartWidgetP
         <Chart config={chartConfig} className='mx-auto aspect-square max-h-[250px]'>
           <PieChart>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel className='bg-white' />} />
-            <Pie data={chartData} dataKey='amount' nameKey='category' innerRadius={60} />
+            <Pie data={chartData} dataKey='amount' nameKey='category' innerRadius={60} label minAngle={5} />
           </PieChart>
         </Chart>
       </Card.Content>

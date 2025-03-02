@@ -4,6 +4,7 @@ import { Sidebar } from '@/components/sidebar';
 import { Topbar } from '@/components/topbar';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 const geistSans = localFont({
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           {children}
 
           <FullscreenModal />
+          <Toaster />
         </GlobalProvider>
       </body>
     </html>
