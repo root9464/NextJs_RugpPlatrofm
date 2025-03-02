@@ -28,12 +28,13 @@ const SearchField = ({ className, placeholder, label, description, errorMessage,
       {!props.children ? (
         <>
           {label && <Label>{label}</Label>}
-          <FieldGroup className='border-uiMutedPrimary bg-uiSecondaryBg border pl-2'>
+          <FieldGroup className='border-uiMutedPrimary bg-uiSecondaryBg text-uiSecondaryText border pl-2'>
             {isPending ? <Loader variant='spin' /> : <Image src={MagnifierIco} alt='Search' width={16} height={16} />}
-            <Input placeholder={placeholder ?? 'Search...'} className='placeholder:text-uiSecondaryText' />
+            <Input placeholder={placeholder ?? 'Search...'} className='placeholder:text-uiSecondaryText text-white' />
 
             <Button
               appearance='plain'
+              type='submit'
               className='text-muted-fg data-hovered:text-fg data-pressed:text-fg bg-uiMutedPrimary size-8 group-data-empty/search-field:invisible data-pressed:bg-transparent'>
               <Image src={SendIco} alt='Send' />
             </Button>

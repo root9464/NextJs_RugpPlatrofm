@@ -1,9 +1,10 @@
 'use client';
 
+import SelectTokenIco from '@assets/svg/select-token.svg';
 import { Card, Chart, ChartConfig, ChartTooltip, ChartTooltipContent } from '@components/ui';
 import { generateColor } from '@shared/utils/utils';
-import { Pie, PieChart, Sector } from 'recharts';
-import { PieSectorDataItem } from 'recharts/types/polar/Pie';
+import Image from 'next/image';
+import { Pie, PieChart } from 'recharts';
 
 type Token = {
   balance: number;
@@ -20,7 +21,7 @@ type PieChartWidgetProps = {
 export const PieChartWidget = ({ tokens }: PieChartWidgetProps) => {
   const chartData = tokens.map((token) => ({
     category: token.symbol,
-    sales: token.balance,
+    amount: token.balance,
     fill: generateColor(),
   }));
 
@@ -36,21 +37,18 @@ export const PieChartWidget = ({ tokens }: PieChartWidgetProps) => {
   ) satisfies ChartConfig;
 
   return (
-    <Card>
-      <Card.Header className='items-center pb-0' title='Token Balance Distribution' description='Current Portfolio Allocation' />
+    <Card className='bg-uiSecondaryBg border-0 border-none text-white'>
+      <Card.Header className='items-center pb-0'>
+        <div className='flex items-center gap-2'>
+          <Image src={SelectTokenIco} alt='Select Token' width={20} height={20} />
+          <h2>fff</h2>
+        </div>
+      </Card.Header>
       <Card.Content className='flex-1 pb-0'>
         <Chart config={chartConfig} className='mx-auto aspect-square max-h-[250px]'>
           <PieChart>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-            <Pie
-              data={chartData}
-              dataKey='sales'
-              nameKey='category'
-              innerRadius={60}
-              strokeWidth={5}
-              activeIndex={0}
-              activeShape={({ outerRadius = 0, ...props }: PieSectorDataItem) => <Sector {...props} outerRadius={outerRadius + 10} />}
-            />
+            <Pie data={chartData} dataKey='amount' nameKey='category' innerRadius={60} />
           </PieChart>
         </Chart>
       </Card.Content>

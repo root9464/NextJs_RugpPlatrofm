@@ -1,6 +1,6 @@
 import { tonApiInstance } from '@shared/lib/axios';
 import { validateResult } from '@shared/utils/utils';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import { z } from 'zod';
 
@@ -80,10 +80,12 @@ const JettonsSchema = z.object({
 type AccountType = z.infer<typeof AccountSchema>;
 type JettonBalanceType = z.infer<typeof JettonBalanceSchema>;
 
-export const useUserBalance = (address: string) =>
-  useQuery({
-    queryKey: ['balance', address],
-    queryFn: async () => {
+export const useUserBalance = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ['balance'],
+    mutationFn: async (address: string) => {
       const [accountResponse, jettonsResponse]: [AxiosResponse<AccountType> | null, AxiosResponse<JettonBalanceType> | null] = await Promise.all([
         tonApiInstance.get(`/accounts/${address}`),
         tonApiInstance.get(`/accounts/${address}/jettons?currencies=ton,usd`),
@@ -103,6 +105,7 @@ export const useUserBalance = (address: string) =>
         symbol: 'TON',
         decimals: 9,
         address: account.address,
+        price_ton: account.balance / 10 ** 9,
       };
 
       const jettonBalances = jettons.balances.map((jetton) => ({
@@ -111,11 +114,16 @@ export const useUserBalance = (address: string) =>
         symbol: jetton.jetton.symbol,
         decimals: jetton.jetton.decimals,
         address: jetton.jetton.address,
+        price_ton: jetton.price.prices.TON,
       }));
 
       return [tonBalance, ...jettonBalances];
     },
-
-    retry: false,
-    enabled: !!address,
+    onSuccess: (data) => {
+      queryClient.setQueryData(
+        ['balance'],
+        data.find((token) => token.symbol === 'TON'),
+      );
+    },
   });
+};
