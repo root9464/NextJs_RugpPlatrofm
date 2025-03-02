@@ -11,7 +11,6 @@ export * from './heading';
 export * from './keyboard';
 export * from './list-box';
 export * from './loader';
-export * from './menu';
 export * from './popover';
 export * from './primitive';
 export * from './search-field';
