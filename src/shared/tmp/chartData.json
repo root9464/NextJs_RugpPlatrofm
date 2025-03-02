@@ -1,0 +1,32 @@
+[
+  {
+    "category": "TON",
+    "sales": 4.478301289,
+    "fill": "var(--chart-1)"
+  },
+  {
+    "category": "CAVI",
+    "sales": 500,
+    "fill": "var(--chart-2)"
+  },
+  {
+    "category": "REBA",
+    "sales": 17910.119081503,
+    "fill": "var(--chart-3)"
+  },
+  {
+    "category": "12",
+    "sales": 12,
+    "fill": "var(--chart-4)"
+  },
+  {
+    "category": "sym",
+    "sales": 12,
+    "fill": "var(--chart-5), var(--chart-6)"
+  },
+  {
+    "category": "MC",
+    "sales": 99999947,
+    "fill": "var(--chart-1)"
+  }
+]

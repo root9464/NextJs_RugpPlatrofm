@@ -1,0 +1,26 @@
+[
+  {
+    "balance": 400,
+    "image": "native",
+    "symbol": "TON",
+    "decimals": 9,
+    "address": "0:3fac6c4648e9e00b305b3e543af461fd0a8d2a60678d5958b1562f3b7038168f",
+    "price_ton": 1
+  },
+  {
+    "balance": 500,
+    "image": "https://cache.tonapi.io/imgproxy/E1rfUKMgVGyUNYWRmNNw-w44yOzbWFhwS4eZZr73fO0/rs:fill:200:200:1/g:no/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1NoYWRvd1RpL25ldy10b2tlbl9pa29uL21haW4vQXJ0Ym9hcmQucG5n.webp",
+    "symbol": "CAVI",
+    "decimals": 9,
+    "address": "0:fa5b4ada0756860abf3aa5677bfa85a9037416d955c227db269587028642217e",
+    "price_ton": 1
+  },
+  {
+    "balance": 600,
+    "image": "https://cache.tonapi.io/imgproxy/mw09U0SV_W6KuaJLddycKU61-d1GANAiyfbqHGnSbuw/rs:fill:200:200:1/g:no/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1JlYmFsYW5jZXIvcGljdHVyZS9tYWluL3JlYmFsYW5jZXIlMjAoMikucG5n.webp",
+    "symbol": "REBA",
+    "decimals": 9,
+    "address": "0:5893d469f238059b113a5c820e88f252c4e6c0c2de837538517533fbb7725085",
+    "price_ton": 1
+  }
+]

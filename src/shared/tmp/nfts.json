@@ -1,0 +1,84 @@
+{
+  "nft_items": [
+    {
+      "address": "12222",
+      "index": 5,
+      "owner": {
+        "address": "0:22222",
+        "is_scam": false,
+        "is_wallet": true
+      },
+      "collection": {
+        "address": "0:22222",
+        "name": "TEST",
+        "description": "Loteria de Anul Nou SHOR TEAM 2025. https://t.me/tonshorovich"
+      },
+      "verified": true,
+      "metadata": {
+        "name": "Lei #5",
+        "image": "https://cyan-implicit-stoat-176.mypinata.cloud/ipfs/bafybeibcvxaetvy2co5o6znixksmeie323l4eicu6gttartbzsjxhxzshm",
+        "description": "Loteria de Anul Nou SHOR TEAM 2025. https://t.me/tonshorovich"
+      },
+      "previews": [
+        {
+          "resolution": "5x5",
+          "url": "https://cache.tonapi.io/imgproxy/nFVpo7JE0KUfsGZPNCYyuYapZq5t3i6yXtGIZPkZNSo/rs:fill:5:5:1/g:no/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht.webp"
+        },
+        {
+          "resolution": "100x100",
+          "url": "https://cache.tonapi.io/imgproxy/Ofok6ZIJGhiTdZcbzRpOs9hweUZFK2nhFRuvgG1Dtbg/rs:fill:100:100:1/g:no/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht.webp"
+        },
+        {
+          "resolution": "500x500",
+          "url": "https://cache.tonapi.io/imgproxy/cu4dk3B4oI5XhWpZBku7ApBNKAAEDofCLzppIHop_hk/rs:fill:500:500:1/g:no/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht.webp"
+        },
+        {
+          "resolution": "1500x1500",
+          "url": "https://cache.tonapi.io/imgproxy/ncx3Im5UgJPh3Z5RlEG4sRPYjc4C9Vr4udIlgl7St28/rs:fill:1500:1500:1/g:no/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht.webp"
+        }
+      ],
+      "approved_by": [],
+      "trust": "none"
+    },
+    {
+      "address": "0:b2c8d73d62771c3e3843e9f40c33eb86fd5f3a55e77112cdcb6f4614ee5b4de6",
+      "index": 5,
+      "owner": {
+        "address": "0:3fac6c4648e9e00b305b3e543af461fd0a8d2a60678d5958b1562f3b7038168f",
+        "is_scam": false,
+        "is_wallet": true
+      },
+      "collection": {
+        "address": "0:2ec7d3618129046c1980733a5d37eba3faa2fa9736780c81c4dfe218503df643",
+        "name": "TEST",
+        "description": "Loteria de Anul Nou SHOR TEAM 2025. https://t.me/tonshorovich"
+      },
+      "verified": true,
+      "metadata": {
+        "name": "Lei #5",
+        "image": "https://cyan-implicit-stoat-176.mypinata.cloud/ipfs/bafybeibcvxaetvy2co5o6znixksmeie323l4eicu6gttartbzsjxhxzshm",
+        "description": "Loteria de Anul Nou SHOR TEAM 2025. https://t.me/tonshorovich"
+      },
+      "previews": [
+        {
+          "resolution": "5x5",
+          "url": "https://cache.tonapi.io/imgproxy/nFVpo7JE0KUfsGZPNCYyuYapZq5t3i6yXtGIZPkZNSo/rs:fill:5:5:1/g:no/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht.webp"
+        },
+        {
+          "resolution": "100x100",
+          "url": "https://cache.tonapi.io/imgproxy/Ofok6ZIJGhiTdZcbzRpOs9hweUZFK2nhFRuvgG1Dtbg/rs:fill:100:100:1/g:no/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht.webp"
+        },
+        {
+          "resolution": "500x500",
+          "url": "https://cache.tonapi.io/imgproxy/cu4dk3B4oI5XhWpZBku7ApBNKAAEDofCLzppIHop_hk/rs:fill:500:500:1/g:no/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht.webp"
+        },
+        {
+          "resolution": "1500x1500",
+          "url": "https://cache.tonapi.io/imgproxy/ncx3Im5UgJPh3Z5RlEG4sRPYjc4C9Vr4udIlgl7St28/rs:fill:1500:1500:1/g:no/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht.webp"
+        }
+      ],
+      "approved_by": [],
+      "trust": "none"
+    }
+  ]
+}
