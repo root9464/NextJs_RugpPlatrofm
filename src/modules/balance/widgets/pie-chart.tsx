@@ -6,12 +6,16 @@ import { generateColor } from '@shared/utils/utils';
 import Image from 'next/image';
 import { Pie, PieChart } from 'recharts';
 
+import OpenFullSizeIco from '@assets/svg/fullsize.svg';
+import ScreenShotIco from '@assets/svg/screenshot.svg';
+
 type Token = {
   balance: number;
   image: string;
   symbol: string;
   decimals: number;
   address: string;
+  price_ton: number;
 };
 
 type PieChartWidgetProps = {
@@ -38,10 +42,15 @@ export const PieChartWidget = ({ tokens }: PieChartWidgetProps) => {
 
   return (
     <Card className='bg-uiSecondaryBg border-0 border-none text-white'>
-      <Card.Header className='items-center pb-0'>
+      <Card.Header className='flex w-full flex-row items-center justify-between pb-0'>
         <div className='flex items-center gap-2'>
           <Image src={SelectTokenIco} alt='Select Token' width={20} height={20} />
-          <h2>fff</h2>
+          <h2 className='text-xl font-bold'>$457 324</h2>
+        </div>
+
+        <div className='flex items-center gap-2'>
+          <Image src={ScreenShotIco} alt='Screen Shot' width={20} height={20} />
+          <Image src={OpenFullSizeIco} alt='Open Full Size' width={20} height={20} />
         </div>
       </Card.Header>
       <Card.Content className='flex-1 pb-0'>

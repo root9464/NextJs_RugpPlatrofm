@@ -1,5 +1,5 @@
 'use client';
-import { useUserBalance } from '@/shared/hooks/useUserBalance';
+import { useUserBalance } from '@/modules/balance/hooks/useUserBalance';
 import { TonConnectButton } from '@tonconnect/ui-react';
 import { IconBell } from 'justd-icons';
 import { SelectNetwork } from './select-network';

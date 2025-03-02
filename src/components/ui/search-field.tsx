@@ -8,7 +8,7 @@ import { Loader } from './loader';
 import { composeTailwindRenderProps } from './primitive';
 
 import MagnifierIco from '@assets/svg/magnifier.svg';
-import SendIco from '@assets/svg/send-arrow.svg';
+import { IconX } from 'justd-icons';
 import Image from 'next/image';
 
 interface SearchFieldProps extends SearchFieldPrimitiveProps {
@@ -34,9 +34,8 @@ const SearchField = ({ className, placeholder, label, description, errorMessage,
 
             <Button
               appearance='plain'
-              type='submit'
               className='text-muted-fg data-hovered:text-fg data-pressed:text-fg bg-uiMutedPrimary size-8 group-data-empty/search-field:invisible data-pressed:bg-transparent'>
-              <Image src={SendIco} alt='Send' />
+              <IconX />
             </Button>
           </FieldGroup>
           {description && <Description>{description}</Description>}

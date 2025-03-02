@@ -153,9 +153,7 @@ const ChartTooltipContent = ({
   const nestLabel = payload.length === 1 && indicator !== 'dot';
 
   return (
-    <div
-      ref={ref}
-      className={cn('bg-overlay text-overlay-fg grid min-w-[12rem] items-start gap-1.5 rounded-lg border px-3 py-2 text-xs shadow-xl', className)}>
+    <div ref={ref} className={cn('grid min-w-[12rem] items-start gap-1.5 rounded-lg border px-3 py-2 text-xs shadow-xl', className)}>
       {!nestLabel ? tooltipLabel : null}
       <div className='grid gap-1.5'>
         {payload.map((item, index) => {
