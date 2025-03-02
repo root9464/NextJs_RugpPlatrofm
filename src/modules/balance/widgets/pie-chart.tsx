@@ -56,7 +56,7 @@ export const PieChartWidget = ({ tokens }: PieChartWidgetProps) => {
       <Card.Content className='flex-1 pb-0'>
         <Chart config={chartConfig} className='mx-auto aspect-square max-h-[250px]'>
           <PieChart>
-            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel className='bg-white' />} />
             <Pie data={chartData} dataKey='amount' nameKey='category' innerRadius={60} />
           </PieChart>
         </Chart>

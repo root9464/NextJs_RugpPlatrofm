@@ -18,7 +18,7 @@ export const ProfileDescription = () => {
       </div>
 
       <Link href='#' className='text-[#0D99FF] underline'>
-        @username
+        @tgchannelname
       </Link>
     </div>
   );

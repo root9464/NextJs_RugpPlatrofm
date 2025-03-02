@@ -1,11 +1,24 @@
 @theme {
   --color-epta: rgb(255, 0, 153);
 
-  --color-uiPrimaryBg: rgba(5, 8, 14, 1);
-  --color-uiSecondaryBg: rgba(9, 12, 20, 1);
+  --color-uiPrimaryBg: var(--uiPrimaryBg);
+  --color-uiSecondaryBg: var(--uiSecondaryBg);
 
-  --color-uiPrimaryText: rgba(65, 74, 96, 1);
-  --color-uiSecondaryText: rgba(65, 74, 96, 1);
+  --color-uiPrimaryText: var(--uiPrimaryText);
+  --color-uiSecondaryText: var(--uiSecondaryText);
 
-  --color-uiMutedPrimary: rgba(18, 27, 46, 1);
+  --color-uiMutedPrimary: var(--uiMutedPrimary);
+}
+
+@layer base {
+
+  :root {
+    --uiPrimaryBg: rgba(5, 8, 14, 1);
+    --uiSecondaryBg: rgba(9, 12, 20, 1);
+
+    --uiPrimaryText: rgba(65, 74, 96, 1);
+    --uiSecondaryText: rgba(65, 74, 96, 1);
+
+    --uiMutedPrimary: rgba(18, 27, 46, 1);
+  }
 }
