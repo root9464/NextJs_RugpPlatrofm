@@ -10,7 +10,7 @@ export const Topbar = () => {
   console.log(data);
 
   return (
-    <div className='fixed top-0 right-0 z-1 flex h-20 w-[calc(100%-72px)] items-center justify-between bg-transparent px-[50px] py-4'>
+    <div className='bg-uiSecondaryBg fixed top-0 right-0 z-1 flex h-20 w-[calc(100%-72px)] items-center justify-between px-[50px] py-4'>
       <div className='flex w-max flex-row items-center gap-2'>
         <SearchField aria-label='Search' placeholder='Search' onSubmit={SearchWallet} />
         <SelectNetwork />
