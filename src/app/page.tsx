@@ -18,7 +18,7 @@ export default function Home() {
         </div>
 
         <div className='h-[108px] w-full bg-lime-400' id='line'>
-          f
+          линейка
         </div>
       </div>
 
