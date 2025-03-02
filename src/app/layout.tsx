@@ -1,3 +1,4 @@
+import { FullscreenModal } from '@/components/fullscreen-modal';
 import { GlobalProvider } from '@/components/providers/global.provider';
 import { Sidebar } from '@/components/sidebar';
 import { Topbar } from '@/components/topbar';
@@ -30,6 +31,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Topbar />
           <Sidebar />
           {children}
+
+          <FullscreenModal />
         </GlobalProvider>
       </body>
     </html>

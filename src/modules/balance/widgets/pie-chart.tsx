@@ -6,8 +6,10 @@ import { generateColor } from '@shared/utils/utils';
 import Image from 'next/image';
 import { Pie, PieChart } from 'recharts';
 
+import { fullScreenModalAtom } from '@/components/fullscreen-modal';
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
+import { useSetAtom } from 'jotai';
 
 type Token = {
   balance: number;
@@ -40,6 +42,12 @@ export const PieChartWidget = ({ tokens }: PieChartWidgetProps) => {
     { balance: { label: 'Balance' } },
   ) satisfies ChartConfig;
 
+  const setModalContent = useSetAtom(fullScreenModalAtom);
+
+  const handleOpenModal = () => {
+    setModalContent({ key: 'pie-chart', content: <PieChartWidget tokens={tokens} /> });
+  };
+
   return (
     <Card className='bg-uiSecondaryBg border-0 border-none text-white'>
       <Card.Header className='flex w-full flex-row items-center justify-between pb-0'>
@@ -50,7 +58,16 @@ export const PieChartWidget = ({ tokens }: PieChartWidgetProps) => {
 
         <div className='flex items-center gap-2'>
           <Image src={ScreenShotIco} alt='Screen Shot' width={20} height={20} />
-          <Image src={OpenFullSizeIco} alt='Open Full Size' width={20} height={20} />
+          <Image
+            src={OpenFullSizeIco}
+            alt='Open Full Size'
+            width={20}
+            height={20}
+            onClick={() => {
+              console.log('test');
+              handleOpenModal();
+            }}
+          />
         </div>
       </Card.Header>
       <Card.Content className='flex-1 pb-0'>

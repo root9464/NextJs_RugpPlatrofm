@@ -14,7 +14,7 @@ export const TokenTable = () => {
       </Table.Header>
       <Table.Body>
         {TEST_BALANCE_DATA.map((token, index) => (
-          <Table.Row>
+          <Table.Row key={index}>
             <Table.Cell>{index}</Table.Cell>
             <Table.Cell>{token.symbol}</Table.Cell>
             <Table.Cell>{token.balance}</Table.Cell>
