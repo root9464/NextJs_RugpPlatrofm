@@ -1,15 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
 'use client';
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom, useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect } from 'react';
 
-export const fullScreenModalAtom = atom<{
+const fullScreenModalAtom = atom<{
   key: string;
   content: React.ReactNode;
 } | null>(null);
 
-export const FullscreenModal = () => {
+const FullscreenModal = () => {
   const [modal, setModal] = useAtom(fullScreenModalAtom);
 
   useEffect(() => {
@@ -41,3 +41,19 @@ export const FullscreenModal = () => {
     </AnimatePresence>
   );
 };
+
+const useFullscreenModal = () => {
+  const setModalContent = useSetAtom(fullScreenModalAtom);
+
+  const mount = (key: string, content: React.ReactNode) => {
+    setModalContent({ key, content });
+  };
+
+  const unmount = () => {
+    setModalContent(null);
+  };
+
+  return { mount, unmount };
+};
+
+export { FullscreenModal, fullScreenModalAtom, useFullscreenModal };
