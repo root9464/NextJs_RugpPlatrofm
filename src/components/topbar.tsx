@@ -1,7 +1,7 @@
 'use client';
-import { useUserBalance } from '@/modules/balance/hooks/useUserBalance';
 import { TonConnectButton } from '@tonconnect/ui-react';
 import { IconBell } from 'justd-icons';
+import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { SearchInput } from './search-input';
 import { SelectNetwork } from './select-network';
@@ -21,13 +21,13 @@ const searchInputSchema = z.object({
 });
 
 export const Topbar = () => {
-  const { mutate: SearchWallet, data } = useUserBalance();
-  console.log(data);
+  const router = useRouter();
+  const searchSubmit = async (search: string) => router.push(`/indexator/${search}`);
 
   return (
     <div className='bg-uiPrimaryBg fixed top-0 right-0 z-1 flex h-20 w-[calc(100%-72px)] items-center justify-between px-[50px] py-4'>
       <div className='flex w-max flex-row items-center gap-2'>
-        <SearchInput placeholder='Search...' func={SearchWallet} schema={searchInputSchema} className='w-[200px]' />
+        <SearchInput placeholder='Search...' func={searchSubmit} schema={searchInputSchema} className='w-[200px]' />
         <SelectNetwork />
       </div>
 
