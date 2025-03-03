@@ -1,3 +1,5 @@
+'use client';
+
 import { copyClipboard } from '@/shared/utils/utils';
 import CopyContentIcon from '@assets/svg/copy.svg';
 import Magnifier from '@assets/svg/magnifier.svg';
@@ -44,8 +46,9 @@ const AddressRow = () => (
             position: 'bottom-right',
             unstyled: true,
             classNames: {
-              toast: 'bg-uiSecondaryBg text-gray-500 rounded-[6px] px-3 py-2 w-[300px] shadow-lg',
-              title: 'text-[#231F20]',
+              toast: 'bg-uiSecondaryBg rounded-lg px-3 py-2 w-[200px] shadow-lg flex flex-row items-center gap-2',
+              title: 'text-white text-sm',
+              description: 'text-uiPrimaryText text-xs',
             },
           });
         }}>

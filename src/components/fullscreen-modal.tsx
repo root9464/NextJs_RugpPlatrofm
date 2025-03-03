@@ -1,41 +1,75 @@
 /* eslint-disable react-refresh/only-export-components */
 'use client';
-import { atom, useAtom, useSetAtom } from 'jotai';
-import { AnimatePresence, motion } from 'motion/react';
-import { useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { atom, useAtom } from 'jotai';
+import { MouseEvent, ReactNode, useEffect } from 'react';
+import { PageLayout } from './layouts/page.layout';
 
-const fullScreenModalAtom = atom<{
-  key: string;
-  content: React.ReactNode;
-} | null>(null);
+type ModalState = {
+  isOpen: boolean;
+  content: ReactNode | null;
+  origin: { x: number; y: number; width: number; height: number } | null;
+};
+
+const modalAtom = atom<ModalState>({
+  content: null,
+  isOpen: false,
+  origin: null,
+});
+
+const modalVariants = {
+  initial: (origin: { x: number; y: number }) => ({
+    opacity: 0,
+    scale: 0.5,
+    x: origin?.x ?? 0,
+    y: origin?.y ?? 0,
+  }),
+  animate: {
+    opacity: 1,
+    scale: 1,
+    x: 0,
+    y: 0,
+  },
+  exit: (origin: { x: number; y: number }) => ({
+    opacity: 0,
+    scale: 0.5,
+    x: origin?.x ?? 0,
+    y: origin?.y ?? 0,
+  }),
+};
+
+const modalTransition = {
+  type: 'spring',
+  mass: 0.8,
+  damping: 25,
+  stiffness: 150,
+  duration: 0.8,
+};
 
 const FullscreenModal = () => {
-  const [modal, setModal] = useAtom(fullScreenModalAtom);
+  const [{ isOpen, content, origin }] = useAtom(modalAtom);
 
   useEffect(() => {
-    if (modal) {
+    if (isOpen) {
       document.body.style.overflow = 'hidden';
     }
-
     return () => {
       document.body.style.overflow = '';
     };
-  }, [modal]);
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
-      {modal && (
+      {isOpen && (
         <motion.div
-          key={modal.key}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className='fixed inset-0 z-[3] h-full w-full bg-red-400'>
-          <div className='relative h-full w-full'>{modal.content}</div>
-
-          <button className='absolute top-4 right-4 z-10' onClick={() => setModal(null)}>
-            закрыть
-          </button>
+          variants={modalVariants}
+          initial='initial'
+          animate='animate'
+          exit='exit'
+          custom={origin}
+          transition={modalTransition}
+          className='bg-uiPrimaryBg relative h-full w-full origin-center shadow-xl'>
+          <PageLayout className='grid h-full grid-cols-[73%_27%] gap-4'>{content}</PageLayout>
         </motion.div>
       )}
     </AnimatePresence>
@@ -43,17 +77,27 @@ const FullscreenModal = () => {
 };
 
 const useFullscreenModal = () => {
-  const setModalContent = useSetAtom(fullScreenModalAtom);
+  const [modalState, setModalState] = useAtom(modalAtom);
 
-  const mount = (key: string, content: React.ReactNode) => {
-    setModalContent({ key, content });
+  const mount = (event: MouseEvent, content: ReactNode) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setModalState({
+      isOpen: true,
+      content,
+      origin: {
+        x: event.clientX - window.innerWidth / 2,
+        y: event.clientY - window.innerHeight / 2,
+        width: rect.width,
+        height: rect.height,
+      },
+    });
   };
 
   const unmount = () => {
-    setModalContent(null);
+    setModalState({ isOpen: false, content: null, origin: null });
   };
 
-  return { mount, unmount };
+  return { mount, unmount, modalState };
 };
 
-export { FullscreenModal, fullScreenModalAtom, useFullscreenModal };
+export { FullscreenModal, modalAtom, useFullscreenModal };

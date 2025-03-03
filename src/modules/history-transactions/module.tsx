@@ -1,4 +1,3 @@
-'use client';
 import { FilterPanel } from './components/filter-panel';
 import { HistoryTransactionsHeader } from './components/header';
 import { HistoryPanel } from './components/history-panel';
