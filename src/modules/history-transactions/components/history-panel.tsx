@@ -8,7 +8,7 @@ import VeryfyIco from '@assets/svg/transactions-markers/verify.svg';
 
 export const HistoryPanel = () => {
   return (
-    <div className='gird h-full w-full grid-rows-subgrid'>
+    <div className='gird h-full w-full grid-rows-subgrid p-4'>
       <TransactionRow />
       <TransactionRow />
       <TransactionRow />

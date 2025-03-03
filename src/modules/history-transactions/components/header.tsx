@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 export const HistoryTransactionsHeader = () => {
   return (
-    <div className='grid h-fit w-full grid-cols-subgrid gap-2 text-white'>
+    <div className='grid h-fit w-full grid-cols-subgrid gap-2 p-4 text-white'>
       <div className='flex h-fit flex-row items-center gap-2'>
         <h3>Name:</h3>
         <p>hotdog-off-lab.ton</p>

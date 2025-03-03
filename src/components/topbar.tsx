@@ -2,8 +2,23 @@
 import { useUserBalance } from '@/modules/balance/hooks/useUserBalance';
 import { TonConnectButton } from '@tonconnect/ui-react';
 import { IconBell } from 'justd-icons';
+import { z } from 'zod';
+import { SearchInput } from './search-input';
 import { SelectNetwork } from './select-network';
-import { SearchField } from './ui';
+
+const searchInputSchema = z.object({
+  search: z
+    .string()
+    .trim()
+    .min(1, { message: 'Field is required' })
+    .max(48, { message: 'Maximum length is 48 characters' })
+    .regex(/^[a-zA-Z0-9_-]*$/, {
+      message: 'Only letters, numbers, hyphens and underscores are allowed',
+    })
+    .startsWith('UQ', { message: "Must start with 'UQ'" })
+    .refine((val) => val.length === 48, { message: 'Must be exactly 48 characters long' })
+    .transform((val) => val.trim()),
+});
 
 export const Topbar = () => {
   const { mutate: SearchWallet, data } = useUserBalance();
@@ -12,7 +27,7 @@ export const Topbar = () => {
   return (
     <div className='bg-uiPrimaryBg fixed top-0 right-0 z-1 flex h-20 w-[calc(100%-72px)] items-center justify-between px-[50px] py-4'>
       <div className='flex w-max flex-row items-center gap-2'>
-        <SearchField aria-label='Search' placeholder='Search' onSubmit={SearchWallet} />
+        <SearchInput placeholder='Search...' func={SearchWallet} schema={searchInputSchema} className='w-[200px]' />
         <SelectNetwork />
       </div>
 
