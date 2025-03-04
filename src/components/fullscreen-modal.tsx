@@ -101,3 +101,5 @@ const useFullscreenModal = () => {
 };
 
 export { FullscreenModal, modalAtom, useFullscreenModal };
+
+export const expandedViewAtom = atom<string | null>(null);
