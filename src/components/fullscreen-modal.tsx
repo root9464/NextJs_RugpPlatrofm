@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 'use client';
-import { AnimatePresence, motion } from 'framer-motion';
 import { atom, useAtom } from 'jotai';
+import { AnimatePresence, motion, Transition, Variants } from 'motion/react';
 import { MouseEvent, ReactNode, useEffect } from 'react';
 import { PageLayout } from './layouts/page.layout';
 
@@ -17,33 +17,39 @@ const modalAtom = atom<ModalState>({
   origin: null,
 });
 
-const modalVariants = {
-  initial: (origin: { x: number; y: number }) => ({
-    opacity: 0,
-    scale: 0.5,
-    x: origin?.x ?? 0,
-    y: origin?.y ?? 0,
-  }),
+const modalVariants: Variants = {
+  initial: { opacity: 0, scale: 0.95, filter: 'blur(5px)' },
   animate: {
     opacity: 1,
     scale: 1,
-    x: 0,
-    y: 0,
+    width: '100%',
+    height: '100%',
+    filter: 'blur(0px)',
+    transition: {
+      duration: 0.8,
+      ease: [0.4, 0, 0.2, 1],
+      width: { duration: 0.6, delay: 0.1 },
+      height: { duration: 0.6, delay: 0.1 },
+      delay: 0.2,
+      when: 'beforeChildren',
+    },
   },
-  exit: (origin: { x: number; y: number }) => ({
-    opacity: 0,
-    scale: 0.5,
-    x: origin?.x ?? 0,
-    y: origin?.y ?? 0,
-  }),
+  exit: { opacity: 0, scale: 0.95, filter: 'blur(0px)', transition: { duration: 0.6, ease: [0.85, 0.6, 0.4, 0.2] } },
 };
 
-const modalTransition = {
-  type: 'spring',
-  mass: 0.8,
-  damping: 25,
-  stiffness: 150,
+const contentVariants: Variants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1], delay: 0.2 } },
+  exit: { opacity: 0, transition: { duration: 0.3 } },
+};
+
+const transition: Transition = {
+  type: 'tween',
+  ease: [0.4, 0, 0.2, 1],
   duration: 0.8,
+  delay: 0.1,
+  delayChildren: 0.1,
+  when: 'beforeChildren',
 };
 
 const FullscreenModal = () => {
@@ -67,9 +73,14 @@ const FullscreenModal = () => {
           animate='animate'
           exit='exit'
           custom={origin}
-          transition={modalTransition}
-          className='bg-uiPrimaryBg relative h-full w-full origin-center shadow-xl'>
-          <PageLayout className='grid h-full grid-cols-[73%_27%] gap-4'>{content}</PageLayout>
+          transition={transition}
+          className='bg-uiPrimaryBg relative h-full w-full origin-center shadow-xl'
+          style={{
+            transformOrigin: origin ? `${origin.x}px ${origin.y}px` : 'center',
+          }}>
+          <motion.div variants={contentVariants}>
+            <PageLayout className='grid h-full grid-cols-[73%_27%] gap-4'>{content}</PageLayout>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
