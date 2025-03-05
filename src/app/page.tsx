@@ -1,4 +1,4 @@
-import { Timeline } from '@/components/timeline';
+import { Timeline } from '@/modules/timeline/components/timeline';
 import { PageLayout } from '@components/layouts/page.layout';
 
 export default function Home() {

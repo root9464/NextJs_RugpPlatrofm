@@ -16,7 +16,7 @@ const generateDateRange = (startDate: Date, endDate: Date) => {
   while (currentDate <= endDate) {
     dates.push({
       month: currentDate.toLocaleDateString('en-US', { month: 'long' }),
-      revenue: 1000, // динамическое значение
+      revenue: 5000, // динамическое значение
     });
     currentDate.setMonth(currentDate.getMonth() + 1);
   }
@@ -90,8 +90,8 @@ export const HistoryBalanceModule = () => {
               <ChartTooltip cursor={false} content={<ChartTooltipContent indicator='line' className='bg-white' />} />
               <defs>
                 <linearGradient id='fillRevenue' x1='0' y1='0' x2='0' y2='1'>
-                  <stop offset='5%' stopColor='var(--color-revenue)' stopOpacity={0.8} />
-                  <stop offset='95%' stopColor='var(--color-revenue)' stopOpacity={0.1} />
+                  <stop offset='5%' stopColor='var(--chart-1)' stopOpacity={0.8} />
+                  <stop offset='95%' stopColor='var(--chart-1)' stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <Area dataKey='revenue' type='natural' fill='url(#fillRevenue)' fillOpacity={0.4} stroke='var(--color-revenue)' />

@@ -1,4 +1,5 @@
 import { PageLayout } from '@/components/layouts/page.layout';
+import { TimeLineModule } from '@/modules/timeline/module';
 import { BalanceModule } from '@modules/balance/module';
 import { HistoryBalanceModule } from '@modules/history-balance/module';
 import { HistoryTransactionsModule } from '@modules/history-transactions/module';
@@ -17,9 +18,7 @@ export default function IndexatorPage({ params }: { params: { address: string } 
           <HistoryBalanceModule />
         </div>
 
-        <div className='h-[108px] w-full bg-lime-400' id='line'>
-          линейка
-        </div>
+        <TimeLineModule />
       </div>
 
       <HistoryTransactionsModule />
