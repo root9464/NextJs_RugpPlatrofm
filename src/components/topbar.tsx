@@ -16,7 +16,6 @@ const searchInputSchema = z.object({
       message: 'Only letters, numbers, hyphens and underscores are allowed',
     })
     .startsWith('UQ', { message: "Must start with 'UQ'" })
-    .refine((val) => val.length === 48, { message: 'Must be exactly 48 characters long' })
     .transform((val) => val.trim()),
 });
 

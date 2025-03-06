@@ -1,4 +1,4 @@
-import { Timeline } from '@/modules/timeline/components/timeline';
+import { AssetsMenu } from '@/modules/history-transactions/entities/assets-menu';
 import { PageLayout } from '@components/layouts/page.layout';
 
 export default function Home() {
@@ -6,7 +6,7 @@ export default function Home() {
     <PageLayout className=''>
       <h1>home</h1>
 
-      <Timeline />
+      <AssetsMenu />
     </PageLayout>
   );
 }

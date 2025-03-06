@@ -19,8 +19,13 @@ const ITEMS = [
 ];
 
 export const SelectNetwork = () => (
-  <Select aria-label='Select network' placeholder='Select a network' className='w-40' defaultSelectedKey={ITEMS[0].id} disabledKeys={[ITEMS[1].id]}>
-    <Select.Trigger className='border-uiMutedPrimary bg-uiSecondaryBg border text-white' />
+  <Select
+    aria-label='Select network'
+    placeholder='Select a network'
+    className='w-40'
+    defaultSelectedKey={ITEMS[0].id}
+    disabledKeys={[ITEMS[1].id]}>
+    <Select.Trigger className='border-uiMutedPrimary bg-uiSecondaryBg cursor-pointer border text-white' />
     <Select.List items={ITEMS} className='bg-uiSecondaryBg'>
       {(item) => (
         <Select.Option id={item.id} key={item.id} className='flex flex-row items-center'>

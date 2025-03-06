@@ -10,6 +10,7 @@ import { useFullscreenModal } from '@/components/fullscreen-modal';
 import { IndexatorModalLayouts } from '@/components/layouts/modal.layouts';
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
+import { useParams } from 'next/navigation';
 import { BalanceModule } from '../module';
 
 type Token = {
@@ -45,6 +46,8 @@ export const PieChartWidget = ({ tokens }: { tokens: Token[] }) => {
     modalState: { isOpen },
   } = useFullscreenModal();
 
+  const { address } = useParams();
+
   return (
     <Card className='bg-uiSecondaryBg border-0 border-none text-white'>
       <Card.Header className='flex w-full flex-row items-center justify-between pb-0'>
@@ -60,7 +63,11 @@ export const PieChartWidget = ({ tokens }: { tokens: Token[] }) => {
             alt='Open Full Size'
             width={20}
             height={20}
-            onClick={isOpen ? unmount : (event) => mount(event, <IndexatorModalLayouts children_module={<BalanceModule address='' />} />)}
+            onClick={
+              isOpen
+                ? unmount
+                : (event) => mount(event, <IndexatorModalLayouts children_module={<BalanceModule address={address as string} />} />)
+            }
           />
         </div>
       </Card.Header>

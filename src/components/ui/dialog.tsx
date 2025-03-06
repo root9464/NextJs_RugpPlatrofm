@@ -13,7 +13,7 @@ import { Button, type ButtonProps } from './button';
 const dialogStyles = tv({
   slots: {
     root: [
-      'peer/dialog group/dialog relative flex max-h-[inherit] flex-col overflow-hidden outline-hidden [scrollbar-width:thin] [&::-webkit-scrollbar]:size-0.5',
+      'peer/dialog group/dialog relative flex gap-3 max-h-[inherit] flex-col overflow-hidden outline-hidden [scrollbar-width:thin] [&::-webkit-scrollbar]:size-0.5',
     ],
     header: 'relative flex flex-col gap-0.5 p-4 sm:gap-1 sm:p-6 [&[data-slot=dialog-header]:has(+[data-slot=dialog-footer])]:pb-0',
     description: 'text-muted-fg text-sm',
@@ -94,7 +94,9 @@ const Description = ({ className, ref, ...props }: DialogDescriptionProps) => (
 );
 
 type DialogBodyProps = React.ComponentProps<'div'>;
-const Body = ({ className, ref, ...props }: DialogBodyProps) => <div data-slot='dialog-body' ref={ref} className={body({ className })} {...props} />;
+const Body = ({ className, ref, ...props }: DialogBodyProps) => (
+  <div data-slot='dialog-body' ref={ref} className={body({ className })} {...props} />
+);
 
 type DialogFooterProps = React.ComponentProps<'div'>;
 const Footer = ({ className, ...props }: DialogFooterProps) => {
@@ -140,7 +142,12 @@ const CloseIndicator = ({ className, ...props }: CloseButtonIndicatorProps) => {
     }
   }, [isMobile]);
   return props.isDismissable ? (
-    <ButtonPrimitive ref={buttonRef} {...(isMobile ? { autoFocus: true } : {})} aria-label='Close' slot='close' className={closeIndicator({ className })}>
+    <ButtonPrimitive
+      ref={buttonRef}
+      {...(isMobile ? { autoFocus: true } : {})}
+      aria-label='Close'
+      slot='close'
+      className={closeIndicator({ className })}>
       <IconX className='size-4' />
     </ButtonPrimitive>
   ) : null;

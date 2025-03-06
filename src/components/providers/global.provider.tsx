@@ -31,7 +31,7 @@ export function GlobalProvider({ children, ...props }: { children: Readonly<Reac
   return (
     <RouterProvider navigate={router.push}>
       <TonConnectUIProvider manifestUrl='https://taiga-labs.github.io/dexlot.json'>
-        <NextThemesProvider enableSystem storageKey='justd-theme' {...props}>
+        <NextThemesProvider enableSystem storageKey='justd-theme' defaultTheme='dark' {...props}>
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         </NextThemesProvider>
       </TonConnectUIProvider>

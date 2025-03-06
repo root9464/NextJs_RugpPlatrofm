@@ -33,11 +33,13 @@ const PopoverHeader = ({ className, ...props }: DialogHeaderProps) => <Dialog.He
 
 const PopoverFooter = ({ className, ...props }: DialogFooterProps) => <Dialog.Footer className={cn('sm:p-4', className)} {...props} />;
 
-const PopoverBody = ({ className, ref, ...props }: DialogBodyProps) => <Dialog.Body ref={ref} className={cn('sm:px-4 sm:pt-0', className)} {...props} />;
+const PopoverBody = ({ className, ref, ...props }: DialogBodyProps) => (
+  <Dialog.Body ref={ref} className={cn('sm:px-4 sm:pt-0', className)} {...props} />
+);
 
 const content = tv({
   base: [
-    'peer/popover-content max-w-xs rounded-xl border bg-uiSecondaryBg bg-uiSecondaryBg text-overlay-fg shadow-xs transition-transform [scrollbar-width:thin] sm:max-w-3xl sm:text-sm dark:backdrop-saturate-200 forced-colors:bg-[Canvas] [&::-webkit-scrollbar]:size-0.5',
+    'peer/popover-content rounded-xl bg-uiSecondaryBg bg-uiSecondaryBg text-overlay-fg shadow-xs transition-transform [scrollbar-width:thin] sm:text-sm dark:backdrop-saturate-200 forced-colors:bg-[Canvas] [&::-webkit-scrollbar]:size-0.5',
   ],
   variants: {
     isPicker: {
@@ -63,7 +65,7 @@ const content = tv({
 });
 
 const drawer = tv({
-  base: ['fixed top-auto bottom-0 z-50 max-h-full w-full max-w-2xl border border-b-transparent bg-overlay outline-hidden'],
+  base: ['fixed top-auto bottom-0 z-50 max-h-full w-full max-w-2xl bg-overlay outline-hidden'],
   variants: {
     isMenu: {
       true: 'rounded-t-xl p-0 [&_[role=dialog]]:*:not-has-[[data-slot=dialog-body]]:px-1',
@@ -109,7 +111,7 @@ const PopoverContent = ({ respectScreen = true, children, showArrow = true, clas
       {...props}
       isDismissable>
       <Modal className={composeRenderProps(className, (className, renderProps) => drawer({ ...renderProps, isMenu, className }))}>
-        <Dialog role='dialog' aria-label={props['aria-label'] ?? 'List item'}>
+        <Dialog role='dialog' aria-label={props['aria-label'] ?? 'List item'} className='flex flex-col gap-3'>
           {children}
         </Dialog>
       </Modal>
@@ -130,7 +132,7 @@ const PopoverContent = ({ respectScreen = true, children, showArrow = true, clas
             width={12}
             height={12}
             viewBox='0 0 12 12'
-            className='fill-overlay stroke-border block group-data-[placement=bottom]:rotate-180 group-data-[placement=left]:-rotate-90 group-data-[placement=right]:rotate-90 forced-colors:fill-[Canvas] forced-colors:stroke-[ButtonBorder]'>
+            className='fill-uiSecondaryBg stroke-uiSecondaryBg block group-data-[placement=bottom]:rotate-180 group-data-[placement=left]:-rotate-90 group-data-[placement=right]:rotate-90 forced-colors:fill-[Canvas] forced-colors:stroke-[ButtonBorder]'>
             <path d='M0 0 L6 6 L12 0' />
           </svg>
         </OverlayArrow>

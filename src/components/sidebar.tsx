@@ -69,7 +69,7 @@ export const Sidebar = () => {
         <AnimatePresence>
           {isOpen && (
             <motion.h1
-              className='text-base font-bold whitespace-nowrap'
+              className='text-base font-bold whitespace-nowrap select-none'
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
@@ -87,7 +87,12 @@ export const Sidebar = () => {
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div variants={contentVariants} initial='closed' animate='open' exit='closed' className='mt-4 w-full text-center'>
+          <motion.div
+            variants={contentVariants}
+            initial='closed'
+            animate='open'
+            exit='closed'
+            className='mt-4 w-full cursor-pointer text-center'>
             <h1>1111</h1>
           </motion.div>
         )}
