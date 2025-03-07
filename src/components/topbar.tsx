@@ -15,7 +15,6 @@ const searchInputSchema = z.object({
     .regex(/^[a-zA-Z0-9_-]*$/, {
       message: 'Only letters, numbers, hyphens and underscores are allowed',
     })
-    .startsWith('UQ', { message: "Must start with 'UQ'" })
     .transform((val) => val.trim()),
 });
 

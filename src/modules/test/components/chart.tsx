@@ -53,13 +53,14 @@ const initialData = [
   { time: '2018-12-31', value: 22.67 },
 ];
 
-export const HistoryBalanceModule = () => {
+export const Chart = () => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleResize = () => {
       chart.applyOptions({ width: chartContainerRef.current?.clientWidth });
     };
+
     const chart = createChart(chartContainerRef.current as HTMLDivElement, {
       ...chartAreaStyle,
       width: chartContainerRef.current?.clientWidth,
@@ -67,11 +68,12 @@ export const HistoryBalanceModule = () => {
     });
 
     chart.timeScale().fitContent();
-
     const newSeries = chart.addSeries(AreaSeries, chartAreaSeriesStyle);
+
     newSeries.setData(initialData);
 
     window.addEventListener('resize', handleResize);
+
     return () => {
       window.removeEventListener('resize', handleResize);
 
@@ -79,9 +81,5 @@ export const HistoryBalanceModule = () => {
     };
   }, [chartContainerRef]);
 
-  return (
-    <div className='bg-uiSecondaryBg flex h-max w-full flex-col gap-2.5 rounded-lg'>
-      <div ref={chartContainerRef} className='h-full w-full' />
-    </div>
-  );
+  return <div ref={chartContainerRef} className='h-full w-full' />;
 };

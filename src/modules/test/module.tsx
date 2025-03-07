@@ -1,9 +1,11 @@
-import { DateMenu } from '../history-transactions/entities/date-menu';
+import { Chart } from './components/chart';
 
 export const TestModule = () => {
   return (
     <div>
-      <DateMenu />
+      <Chart />
+
+      <div className='bg-chart-1'>f</div>
     </div>
   );
 };
