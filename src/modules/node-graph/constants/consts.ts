@@ -16,13 +16,13 @@ const nodes: GraphNode[] = [
 
 const edges: GraphEdge[] = [
   { source: '0', target: '1', id: '0-1', label: '0-1' },
-  { source: '0', target: '2', id: '0-2', label: '0-2' },
+  { source: '0', target: '2', id: '0-2', label: '0-2', fill: 'red' },
   { source: '0', target: '3', id: '0-3', label: '0-3' },
   { source: '0', target: '4', id: '0-4', label: '0-4' },
-  { source: '2', target: '6', id: '2-6', label: '2-6' },
+  { source: '2', target: '6', id: '2-6', label: '2-6', fill: 'red' },
   { source: '2', target: '7', id: '2-7', label: '2-7' },
   { source: '3', target: '8', id: '3-8', label: '3-8' },
-  { source: '6', target: '9', id: '6-9', label: '6-9' },
+  { source: '6', target: '9', id: '6-9', label: '6-9', fill: 'red' },
   { source: '7', target: '10', id: '7-10', label: '7-10' },
   { source: '8', target: '11', id: '8-11', label: '8-11' },
 ];
@@ -39,8 +39,9 @@ const theme: Theme = {
     selectedOpacity: 1,
     inactiveOpacity: 0.3,
     label: {
-      color: 'rgb(65, 74, 96)',
+      color: 'rgba(65, 74, 96, 1)',
       activeColor: 'rgb(192,21,252)',
+      stroke: 0,
     },
   },
   edge: {
@@ -50,8 +51,10 @@ const theme: Theme = {
     selectedOpacity: 1,
     inactiveOpacity: 0.3,
     label: {
-      color: 'rgb(65, 74, 96)',
+      color: 'rgba(65, 74, 96, 1)',
       activeColor: 'blue',
+      fontSize: 6,
+      stroke: 0,
     },
   },
   ring: {

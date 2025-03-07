@@ -2,6 +2,7 @@
 'use client';
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 
 type TimelineProps = {
   widthSize: number;
@@ -10,6 +11,49 @@ type TimelineProps = {
   formatMarker?: (marker: any) => string;
   offset?: number;
 };
+
+const histogramData = [
+  { name: 'May', value: 150 },
+  { name: 'May', value: 210 },
+  { name: 'May', value: 320 },
+  { name: 'May', value: 180 },
+  { name: 'May', value: 260 },
+  { name: 'Jun.', value: 90 },
+  { name: 'Jun.', value: 140 },
+  { name: 'Jun.', value: 200 },
+  { name: 'Jun.', value: 170 },
+  { name: 'Jun.', value: 230 },
+  { name: 'Jul.', value: 120 },
+  { name: 'Jul.', value: 180 },
+  { name: 'Jul.', value: 250 },
+  { name: 'Jul.', value: 300 },
+  { name: 'Jul.', value: 210 },
+  { name: 'Aug.', value: 200 },
+  { name: 'Aug.', value: 270 },
+  { name: 'Aug.', value: 350 },
+  { name: 'Aug.', value: 290 },
+  { name: 'Aug.', value: 310 },
+  { name: 'Sep.', value: 330 },
+  { name: 'Sep.', value: 410 },
+  { name: 'Sep.', value: 380 },
+  { name: 'Sep.', value: 460 },
+  { name: 'Sep.', value: 390 },
+  { name: 'Oct.', value: 250 },
+  { name: 'Oct.', value: 320 },
+  { name: 'Oct.', value: 280 },
+  { name: 'Oct.', value: 360 },
+  { name: 'Oct.', value: 310 },
+  { name: 'Nov.', value: 290 },
+  { name: 'Nov.', value: 350 },
+  { name: 'Nov.', value: 400 },
+  { name: 'Nov.', value: 380 },
+  { name: 'Nov.', value: 420 },
+  { name: 'Dec.', value: 190 },
+  { name: 'Dec.', value: 240 },
+  { name: 'Dec.', value: 300 },
+  { name: 'Dec.', value: 270 },
+  { name: 'Dec.', value: 330 },
+];
 
 export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker, offset }: TimelineProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -88,6 +132,11 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
         </div>
 
         <motion.div className='bg-chart-1/20 absolute h-full w-full' style={{ x: leftX, width: highlightWidth }} />
+        <ResponsiveContainer width='100%' height='100%'>
+          <BarChart data={histogramData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+            <Bar dataKey='value' fill='var(--color-chart-1)' barSize={5} />
+          </BarChart>
+        </ResponsiveContainer>
 
         <motion.div
           drag='x'
