@@ -72,7 +72,7 @@ const FullscreenModal = () => {
           exit='exit'
           custom={origin}
           transition={transition}
-          className='bg-uiPrimaryBg fixed inset-0 z-[4] h-full w-full origin-center shadow-xl'
+          className='bg-uiPrimaryBg fixed inset-0 z-[1] h-full w-full origin-center shadow-xl'
           style={{
             transformOrigin: origin ? `${origin.x}px ${origin.y}px` : 'center',
           }}>

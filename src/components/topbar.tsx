@@ -23,7 +23,7 @@ export const Topbar = () => {
   const searchSubmit = async (search: string) => router.push(`/indexator/${search}`);
 
   return (
-    <div className='bg-uiPrimaryBg fixed top-0 right-0 z-1 flex h-20 w-[calc(100%-72px)] items-center justify-between px-[50px] py-4'>
+    <div className='bg-uiPrimaryBg fixed top-0 right-0 z-[2] flex h-20 w-[calc(100%-72px)] items-center justify-between px-[50px] py-4'>
       <div className='flex w-max flex-row items-center gap-2'>
         <SearchInput placeholder='Search...' func={searchSubmit} schema={searchInputSchema} className='w-[200px]' />
         <SelectNetwork />

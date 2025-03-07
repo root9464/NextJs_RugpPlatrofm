@@ -1,4 +1,4 @@
-import { TestModule } from '@/modules/test/module';
+import { NodeGraphModule } from '@/modules/node-graph/module';
 import { PageLayout } from '@components/layouts/page.layout';
 
 export default function Home() {
@@ -6,7 +6,7 @@ export default function Home() {
     <PageLayout className=''>
       <h1>home</h1>
 
-      <TestModule />
+      <NodeGraphModule />
     </PageLayout>
   );
 }

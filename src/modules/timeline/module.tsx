@@ -24,21 +24,8 @@ const widthSizeRanges = [
 ];
 
 function getWidthSize(minWidth: number) {
-  const sortedRanges = [...widthSizeRanges].sort((a, b) => b.minWidth - a.minWidth);
-  for (let i = 0; i < sortedRanges.length - 1; i++) {
-    const upper = sortedRanges[i];
-    const lower = sortedRanges[i + 1];
-
-    if (minWidth <= upper.minWidth && minWidth > lower.minWidth) {
-      const ratio = (minWidth - lower.minWidth) / (upper.minWidth - lower.minWidth);
-      return Math.round(lower.widthSize + ratio * (upper.widthSize - lower.widthSize));
-    }
-  }
-
-  if (minWidth > sortedRanges[0].minWidth) {
-    return sortedRanges[0].widthSize;
-  }
-  return sortedRanges[sortedRanges.length - 1].widthSize;
+  const widthSizeRange = widthSizeRanges.find((range) => range.minWidth <= minWidth) ?? widthSizeRanges[widthSizeRanges.length - 1];
+  return widthSizeRange.widthSize;
 }
 
 export const TimeLineModule = () => {

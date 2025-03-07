@@ -1,4 +1,5 @@
 import { PageLayout } from '@/components/layouts/page.layout';
+import { NodeGraphModule } from '@/modules/node-graph/module';
 import { TimeLineModule } from '@/modules/timeline/module';
 import { BalanceModule } from '@modules/balance/module';
 import { HistoryBalanceModule } from '@modules/history-balance/module';
@@ -15,7 +16,10 @@ export default function IndexatorPage({ params }: { params: { address: string } 
             <BalanceModule address={params.address} />
           </div>
 
-          <HistoryBalanceModule />
+          <div className='flex h-full w-full flex-col gap-5'>
+            <HistoryBalanceModule />
+            <NodeGraphModule />
+          </div>
         </div>
 
         <TimeLineModule />
