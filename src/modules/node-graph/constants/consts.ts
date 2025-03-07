@@ -39,7 +39,7 @@ const theme: Theme = {
     selectedOpacity: 1,
     inactiveOpacity: 0.3,
     label: {
-      color: 'rgba(65, 74, 96, 1)',
+      color: 'rgb(65, 74, 96)',
       activeColor: 'rgb(192,21,252)',
     },
   },
@@ -50,7 +50,7 @@ const theme: Theme = {
     selectedOpacity: 1,
     inactiveOpacity: 0.3,
     label: {
-      color: 'rgba(65, 74, 96, 1)',
+      color: 'rgb(65, 74, 96)',
       activeColor: 'blue',
     },
   },
