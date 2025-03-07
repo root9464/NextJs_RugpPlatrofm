@@ -2,7 +2,7 @@
 'use client';
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { useRef } from 'react';
-import { Bar, BarChart, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis } from 'recharts';
 
 type TimelineProps = {
   widthSize: number;
@@ -12,48 +12,14 @@ type TimelineProps = {
   offset?: number;
 };
 
-const histogramData = [
-  { name: 'May', value: 150 },
-  { name: 'May', value: 210 },
-  { name: 'May', value: 320 },
-  { name: 'May', value: 180 },
-  { name: 'May', value: 260 },
-  { name: 'Jun.', value: 90 },
-  { name: 'Jun.', value: 140 },
-  { name: 'Jun.', value: 200 },
-  { name: 'Jun.', value: 170 },
-  { name: 'Jun.', value: 230 },
-  { name: 'Jul.', value: 120 },
-  { name: 'Jul.', value: 180 },
-  { name: 'Jul.', value: 250 },
-  { name: 'Jul.', value: 300 },
-  { name: 'Jul.', value: 210 },
-  { name: 'Aug.', value: 200 },
-  { name: 'Aug.', value: 270 },
-  { name: 'Aug.', value: 350 },
-  { name: 'Aug.', value: 290 },
-  { name: 'Aug.', value: 310 },
-  { name: 'Sep.', value: 330 },
-  { name: 'Sep.', value: 410 },
-  { name: 'Sep.', value: 380 },
-  { name: 'Sep.', value: 460 },
-  { name: 'Sep.', value: 390 },
-  { name: 'Oct.', value: 250 },
-  { name: 'Oct.', value: 320 },
-  { name: 'Oct.', value: 280 },
-  { name: 'Oct.', value: 360 },
-  { name: 'Oct.', value: 310 },
-  { name: 'Nov.', value: 290 },
-  { name: 'Nov.', value: 350 },
-  { name: 'Nov.', value: 400 },
-  { name: 'Nov.', value: 380 },
-  { name: 'Nov.', value: 420 },
-  { name: 'Dec.', value: 190 },
-  { name: 'Dec.', value: 240 },
-  { name: 'Dec.', value: 300 },
-  { name: 'Dec.', value: 270 },
-  { name: 'Dec.', value: 330 },
-];
+const hasValue = (
+  marker: unknown,
+): marker is {
+  label: string;
+  value: number;
+} => {
+  return typeof marker === 'object' && marker !== null && 'value' in marker && typeof (marker as any).value === 'number';
+};
 
 export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker, offset }: TimelineProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -64,24 +30,30 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
   const defaultMarkerToPercentage = (marker: unknown): number => {
     if (typeof marker === 'number') return marker;
     if (marker instanceof Date) {
-      const dates = markers as Date[];
+      const dates = markers.filter((m) => m instanceof Date) as Date[];
+      if (dates.length < 2) return 0;
       const times = dates.map((d) => d.getTime());
       const [min, max] = [Math.min(...times), Math.max(...times)];
-      return ((Number(marker) - min) / (max - min)) * 100;
+      return ((marker.getTime() - min) / (max - min)) * 100;
     }
     if (typeof marker === 'string') {
       const num = parseFloat(marker);
       if (!isNaN(num)) return num;
-      return (markers.indexOf(marker) / (markers.length - 1)) * 100;
     }
-    throw new Error('Please provide markerToPercentage for custom marker types');
+    const index = markers.indexOf(marker);
+    if (index === -1) {
+      console.warn('Маркер не найден в массиве markers:', marker);
+      return 0;
+    }
+    return (index / (markers.length - 1)) * 100;
   };
 
   const defaultFormatMarker = (marker: unknown): string => {
     if (typeof marker === 'number') return `${marker}%`;
     if (marker instanceof Date) return marker.toLocaleDateString();
     if (typeof marker === 'string') return marker;
-    throw new Error('Please provide formatMarker for custom marker types');
+    if (hasValue(marker)) return marker.label ?? String(marker.value);
+    return String(marker);
   };
 
   const effectiveMarkerToPercentage = markerToPercentage ?? defaultMarkerToPercentage;
@@ -91,6 +63,8 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
     .map((marker) => ({
       marker,
       position: thisOffset + (effectiveMarkerToPercentage(marker) / 100) * effectiveWidth,
+      positionPercentage: effectiveMarkerToPercentage(marker) / 100,
+      value: hasValue(marker) ? marker.value : effectiveFormatMarker(marker),
     }))
     .sort((a, b) => a.position - b.position);
 
@@ -132,11 +106,15 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
         </div>
 
         <motion.div className='bg-chart-1/20 absolute h-full w-full' style={{ x: leftX, width: highlightWidth }} />
-        <ResponsiveContainer width='100%' height='100%'>
-          <BarChart data={histogramData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-            <Bar dataKey='value' fill='var(--color-chart-1)' barSize={5} />
-          </BarChart>
-        </ResponsiveContainer>
+
+        <div style={{ left: thisOffset, width: effectiveWidth, height: '100%' }}>
+          <ResponsiveContainer width='100%' height='100%'>
+            <BarChart data={markerData} barCategoryGap={0} barGap={0}>
+              <XAxis dataKey='positionPercentage' type='number' domain={[0, 1]} hide />
+              <Bar dataKey='value' fill='var(--color-chart-1)' barSize={5} shape={CustomBarShape as any} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
         <motion.div
           drag='x'
@@ -165,4 +143,16 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
       </div>
     </div>
   );
+};
+
+type CustomBarProps = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  [key: string]: any;
+};
+
+const CustomBarShape = ({ x, y, width, height, ...props }: CustomBarProps) => {
+  return <rect x={x - 2.5} y={y + height / 2} width={width} height={height / 2} fill='var(--color-chart-1)' {...props} />;
 };

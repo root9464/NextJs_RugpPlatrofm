@@ -28,10 +28,53 @@ function getWidthSize(minWidth: number) {
   return widthSizeRange.widthSize;
 }
 
+const histogramData = [
+  { name: 'May', value: 150 },
+  { name: 'May', value: 210 },
+  { name: 'May', value: 320 },
+  { name: 'May', value: 180 },
+  { name: 'May', value: 260 },
+  { name: 'Jun.', value: 90 },
+  { name: 'Jun.', value: 140 },
+  { name: 'Jun.', value: 200 },
+  { name: 'Jun.', value: 170 },
+  { name: 'Jun.', value: 230 },
+  { name: 'Jul.', value: 120 },
+  { name: 'Jul.', value: 180 },
+  { name: 'Jul.', value: 250 },
+  { name: 'Jul.', value: 300 },
+  { name: 'Jul.', value: 210 },
+  { name: 'Aug.', value: 200 },
+  { name: 'Aug.', value: 270 },
+  { name: 'Aug.', value: 350 },
+  { name: 'Aug.', value: 290 },
+  { name: 'Aug.', value: 310 },
+  { name: 'Sep.', value: 330 },
+  { name: 'Sep.', value: 410 },
+  { name: 'Sep.', value: 380 },
+  { name: 'Sep.', value: 460 },
+  { name: 'Sep.', value: 390 },
+  { name: 'Oct.', value: 250 },
+  { name: 'Oct.', value: 320 },
+  { name: 'Oct.', value: 280 },
+  { name: 'Oct.', value: 360 },
+  { name: 'Oct.', value: 310 },
+  { name: 'Nov.', value: 290 },
+  { name: 'Nov.', value: 350 },
+  { name: 'Nov.', value: 400 },
+  { name: 'Nov.', value: 380 },
+  { name: 'Nov.', value: 420 },
+  { name: 'Dec.', value: 190 },
+  { name: 'Dec.', value: 240 },
+  { name: 'Dec.', value: 300 },
+  { name: 'Dec.', value: 270 },
+  { name: 'Dec.', value: 330 },
+];
+
 export const TimeLineModule = () => {
   const { width } = useWindow();
 
   const widthSize = getWidthSize(width);
 
-  return <Timeline widthSize={widthSize} markers={dateMarkers} markerToPercentage={dateMarkersPercentage} formatMarker={formatMarker} />;
+  return <Timeline widthSize={widthSize} markers={histogramData} />;
 };
