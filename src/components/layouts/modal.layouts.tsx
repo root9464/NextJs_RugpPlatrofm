@@ -1,16 +1,17 @@
 import { HistoryTransactionsModule } from '@/modules/history-transactions/module';
-import { Fragment, ReactNode } from 'react';
+import { TimeLineModule } from '@/modules/timeline/module';
+import { ReactNode } from 'react';
+import { PageLayout } from './page.layout';
 
 const IndexatorModalLayouts = ({ children_module }: Readonly<{ children_module: ReactNode }>) => (
-  <Fragment>
-    <div className='absolute z-[4] flex h-full w-full flex-col gap-3'>
+  <PageLayout className='grid h-full w-full grid-cols-[73%_27%] gap-4'>
+    <div className='flex h-full w-full flex-col gap-3' id='modal-workspace'>
       {children_module}
-      <div className='h-[108px] w-full bg-lime-400' id='line'>
-        линейка
-      </div>
+      <TimeLineModule />
     </div>
+
     <HistoryTransactionsModule />
-  </Fragment>
+  </PageLayout>
 );
 
 export { IndexatorModalLayouts };

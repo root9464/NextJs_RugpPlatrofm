@@ -1,9 +1,7 @@
-/* eslint-disable react-refresh/only-export-components */
 'use client';
 import { atom, useAtom } from 'jotai';
 import { AnimatePresence, motion, Transition, Variants } from 'motion/react';
 import { MouseEvent, ReactNode, useEffect } from 'react';
-import { PageLayout } from './layouts/page.layout';
 
 type ModalState = {
   isOpen: boolean;
@@ -74,13 +72,11 @@ const FullscreenModal = () => {
           exit='exit'
           custom={origin}
           transition={transition}
-          className='bg-uiPrimaryBg relative h-full w-full origin-center shadow-xl'
+          className='bg-uiPrimaryBg fixed inset-0 z-[4] h-full w-full origin-center shadow-xl'
           style={{
             transformOrigin: origin ? `${origin.x}px ${origin.y}px` : 'center',
           }}>
-          <motion.div variants={contentVariants}>
-            <PageLayout className='grid h-full grid-cols-[73%_27%] gap-4'>{content}</PageLayout>
-          </motion.div>
+          <motion.div variants={contentVariants}>{content}</motion.div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -112,5 +108,3 @@ const useFullscreenModal = () => {
 };
 
 export { FullscreenModal, modalAtom, useFullscreenModal };
-
-export const expandedViewAtom = atom<string | null>(null);
