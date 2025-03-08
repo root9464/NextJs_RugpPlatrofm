@@ -1,6 +1,7 @@
 'use client';
 
-import { DateRangePicker, Popover } from '@/components/ui';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
+import { Popover } from '@/components/ui/popover';
 
 export const DateMenu = () => {
   return (

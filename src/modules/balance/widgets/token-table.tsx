@@ -1,7 +1,7 @@
 'use client';
 
 import TEST_BALANCE_DATA from '@/shared/tmp/balance.json';
-import { Table } from '@components/ui';
+import { Table } from '@components/ui/table';
 
 export const TokenTable = () => {
   return (

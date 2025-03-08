@@ -1,6 +1,6 @@
 'use client';
 
-import { Card } from '@components/ui';
+import { Card } from '@components/ui/card';
 import Image from 'next/image';
 
 import { useFullscreenModal } from '@/components/fullscreen-modal';

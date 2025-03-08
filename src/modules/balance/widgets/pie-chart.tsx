@@ -1,7 +1,9 @@
 'use client';
 
 import SelectTokenIco from '@assets/svg/select-token.svg';
-import { Card, Chart, ChartConfig, ChartTooltip, ChartTooltipContent } from '@components/ui';
+import { Card } from '@components/ui/card';
+import { Chart, ChartConfig, ChartTooltip, ChartTooltipContent } from '@components/ui/chart';
+
 import { generateColor } from '@shared/utils/utils';
 import Image from 'next/image';
 import { Pie, PieChart } from 'recharts';

@@ -2,7 +2,7 @@
 
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
-import { Tabs } from '@components/ui';
+import { Tabs } from '@components/ui/tabs';
 import Image from 'next/image';
 import { PieChartWidget } from './widgets/pie-chart';
 import { TokenTable } from './widgets/token-table';
