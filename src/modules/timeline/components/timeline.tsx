@@ -4,21 +4,32 @@ import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { Bar, BarChart, ResponsiveContainer, XAxis } from 'recharts';
 
+type DefaultObject = {
+  year: string;
+  month: string;
+  records: Array<{ date: string; value: number }>;
+};
+
 type TimelineProps = {
   widthSize: number;
-  markers: unknown[];
-  markerToPercentage?: (marker: any) => number;
-  formatMarker?: (marker: any) => string;
+  markers: DefaultObject[];
+  markerToPercentage?: (marker: DefaultObject) => number;
+  formatMarker?: (marker: DefaultObject) => string;
   offset?: number;
 };
 
-const hasValue = (
-  marker: unknown,
-): marker is {
-  label: string;
-  value: number;
-} => {
-  return typeof marker === 'object' && marker !== null && 'value' in marker && typeof (marker as any).value === 'number';
+const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+const markerToDate = (marker: DefaultObject): Date => {
+  const monthIndex = monthNames.indexOf(marker.month);
+  if (monthIndex === -1) {
+    throw new Error(`Invalid month: ${marker.month}`);
+  }
+  return new Date(parseInt(marker.year), monthIndex);
+};
+
+const defaultFormatMarker = (marker: DefaultObject): string => {
+  return `${marker.month} ${marker.year}`;
 };
 
 export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker, offset }: TimelineProps) => {
@@ -27,33 +38,15 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
   const thisOffset = offset ?? 0;
   const effectiveWidth = width.get() - 2 * thisOffset;
 
-  const defaultMarkerToPercentage = (marker: unknown): number => {
-    if (typeof marker === 'number') return marker;
-    if (marker instanceof Date) {
-      const dates = markers.filter((m) => m instanceof Date) as Date[];
-      if (dates.length < 2) return 0;
-      const times = dates.map((d) => d.getTime());
-      const [min, max] = [Math.min(...times), Math.max(...times)];
-      return ((marker.getTime() - min) / (max - min)) * 100;
-    }
-    if (typeof marker === 'string') {
-      const num = parseFloat(marker);
-      if (!isNaN(num)) return num;
-    }
-    const index = markers.indexOf(marker);
-    if (index === -1) {
-      console.warn('Маркер не найден в массиве markers:', marker);
-      return 0;
-    }
-    return (index / (markers.length - 1)) * 100;
-  };
-
-  const defaultFormatMarker = (marker: unknown): string => {
-    if (typeof marker === 'number') return `${marker}%`;
-    if (marker instanceof Date) return marker.toLocaleDateString();
-    if (typeof marker === 'string') return marker;
-    if (hasValue(marker)) return marker.label ?? String(marker.value);
-    return String(marker);
+  const defaultMarkerToPercentage = (marker: DefaultObject): number => {
+    if (markers.length === 0) return 0;
+    const dates = markers.map(markerToDate);
+    const times = dates.map((d) => d.getTime());
+    const minTime = Math.min(...times);
+    const maxTime = Math.max(...times);
+    if (minTime === maxTime) return 50;
+    const markerTime = markerToDate(marker).getTime();
+    return ((markerTime - minTime) / (maxTime - minTime)) * 100;
   };
 
   const effectiveMarkerToPercentage = markerToPercentage ?? defaultMarkerToPercentage;
@@ -64,23 +57,38 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
       marker,
       position: thisOffset + (effectiveMarkerToPercentage(marker) / 100) * effectiveWidth,
       positionPercentage: effectiveMarkerToPercentage(marker) / 100,
-      value: hasValue(marker) ? marker.value : effectiveFormatMarker(marker),
     }))
     .sort((a, b) => a.position - b.position);
 
-  const leftX = useMotionValue(markerData[0]?.position ?? 0);
-  const rightX = useMotionValue(markerData[markerData.length - 1]?.position ?? 0);
+  const barData = markers.flatMap((marker, index) => {
+    if (index === markers.length - 1) return [];
+    const numBars = marker.records.length;
+    const startPosition = markerData[index].position;
+    const endPosition = markerData[index + 1].position;
+    const barWidth = (endPosition - startPosition) / numBars;
+
+    return marker.records.map((record, recordIndex) => ({
+      position: startPosition + recordIndex * barWidth + barWidth / 2,
+      positionPercentage: (startPosition + recordIndex * barWidth + barWidth / 2 - thisOffset) / effectiveWidth,
+      value: record.value,
+    }));
+  });
+
+  const sortedBarData = [...barData].sort((a, b) => a.position - b.position);
+
+  const leftX = useMotionValue(sortedBarData[0]?.position ?? 0);
+  const rightX = useMotionValue(sortedBarData[sortedBarData.length - 1]?.position ?? 0);
   const highlightWidth = useTransform(() => rightX.get() - leftX.get());
 
   const snap = (x: number, isLeft: boolean, otherX: number) => {
-    const minDistance = markerData.length > 1 ? markerData[1].position - markerData[0].position : 0;
+    const minDistance = sortedBarData.length > 1 ? sortedBarData[1].position - sortedBarData[0].position : 0;
     const possiblePositions = isLeft
-      ? markerData.filter((data) => data.position <= otherX - minDistance).map((data) => data.position)
-      : markerData.filter((data) => data.position >= otherX + minDistance).map((data) => data.position);
+      ? sortedBarData.filter((data) => data.position <= otherX - minDistance).map((data) => data.position)
+      : sortedBarData.filter((data) => data.position >= otherX + minDistance).map((data) => data.position);
 
     return possiblePositions.reduce(
       (p, c) => (Math.abs(c - x) < Math.abs(p - x) ? c : p),
-      isLeft ? (markerData[0]?.position ?? 0) : (markerData[markerData.length - 1]?.position ?? 0),
+      isLeft ? (sortedBarData[0]?.position ?? 0) : (sortedBarData[sortedBarData.length - 1]?.position ?? 0),
     );
   };
 
@@ -109,7 +117,7 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
 
         <div style={{ left: thisOffset, width: effectiveWidth, height: '100%' }}>
           <ResponsiveContainer width='100%' height='100%'>
-            <BarChart data={markerData} barCategoryGap={0} barGap={0}>
+            <BarChart data={barData} barCategoryGap={0} barGap={0}>
               <XAxis dataKey='positionPercentage' type='number' domain={[0, 1]} hide />
               <Bar dataKey='value' fill='var(--color-chart-1)' barSize={5} shape={CustomBarShape as any} />
             </BarChart>
