@@ -19,6 +19,7 @@
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.2.1",
     "@tonconnect/ui-react": "^2.0.11",
+    "@xyflow/react": "^12.4.4",
     "arktype": "^2.1.1",
     "axios": "^1.8.1",
     "eslint-plugin-react-hooks": "^5.2.0",

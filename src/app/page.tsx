@@ -1,4 +1,4 @@
-import { TimeLineModule } from '@/modules/timeline/module';
+import { NodeGraph } from '@/modules/node-graph/components/node-graph';
 import { PageLayout } from '@components/layouts/page.layout';
 
 export default function Home() {
@@ -6,7 +6,7 @@ export default function Home() {
     <PageLayout className=''>
       <h1>home</h1>
 
-      <TimeLineModule />
+      <NodeGraph />
     </PageLayout>
   );
 }
