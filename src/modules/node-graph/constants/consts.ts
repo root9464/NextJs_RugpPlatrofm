@@ -1,74 +1,72 @@
-import { GraphEdge, GraphNode, Theme } from 'reagraph';
+import { Edge, Node } from '@xyflow/react';
 
-const nodes: GraphNode[] = [
-  { id: '0', label: 'Node 0' },
-  { id: '1', label: 'Node 1' },
-  { id: '2', label: 'Node 2' },
-  { id: '3', label: 'Node 3' },
-  { id: '4', label: 'Node 4' },
-  { id: '6', label: 'Node 6' },
-  { id: '7', label: 'Node 7' },
-  { id: '8', label: 'Node 8' },
-  { id: '9', label: 'Node 9' },
-  { id: '10', label: 'Node 10' },
-  { id: '11', label: 'Node 11' },
+const initialNodes: Node[] = [
+  {
+    id: '1',
+    position: { x: 0, y: 0 },
+    data: { title: 'Wallet', subline: 'то откуда' },
+    type: 'turbo',
+  },
+  {
+    id: '2',
+    position: { x: 250, y: -100 },
+    data: { title: '1', subline: '1' },
+    type: 'turbo',
+  },
+  {
+    id: '3',
+    position: { x: 250, y: 0 },
+    data: { title: '2', subline: '2' },
+    type: 'turbo',
+  },
+  {
+    id: '4',
+    position: { x: 250, y: 100 },
+    data: { title: '3', subline: '3' },
+    type: 'turbo',
+  },
+  {
+    id: '5',
+    position: { x: 500, y: -150 },
+    data: { title: '4', subline: '4' },
+    type: 'turbo',
+  },
+  {
+    id: '6',
+    position: { x: 500, y: -50 },
+    data: { title: '5', subline: '5' },
+    type: 'turbo',
+  },
+  {
+    id: '7',
+    position: { x: 500, y: 50 },
+    data: { title: '6', subline: '6' },
+    type: 'turbo',
+  },
+  {
+    id: '8',
+    position: { x: 750, y: -100 },
+    data: { title: '7' },
+    type: 'turbo',
+  },
+  {
+    id: '9',
+    position: { x: 750, y: 50 },
+    data: { title: '7' },
+    type: 'turbo',
+  },
 ];
 
-const edges: GraphEdge[] = [
-  { source: '0', target: '1', id: '0-1', label: '0-1' },
-  { source: '0', target: '2', id: '0-2', label: '0-2', fill: 'red' },
-  { source: '0', target: '3', id: '0-3', label: '0-3' },
-  { source: '0', target: '4', id: '0-4', label: '0-4' },
-  { source: '2', target: '6', id: '2-6', label: '2-6', fill: 'red' },
-  { source: '2', target: '7', id: '2-7', label: '2-7' },
-  { source: '3', target: '8', id: '3-8', label: '3-8' },
-  { source: '6', target: '9', id: '6-9', label: '6-9', fill: 'red' },
-  { source: '7', target: '10', id: '7-10', label: '7-10' },
-  { source: '8', target: '11', id: '8-11', label: '8-11' },
+const initialEdges: Edge[] = [
+  { id: 'e1-2', source: '1', target: '2', type: 'step' },
+  { id: 'e1-3', source: '1', target: '3', type: 'step' },
+  { id: 'e1-4', source: '1', target: '4', type: 'step' },
+  { id: 'e2-5', source: '2', target: '5', type: 'step' },
+  { id: 'e2-6', source: '2', target: '6', type: 'step' },
+  { id: 'e3-7', source: '3', target: '7', type: 'step' },
+  { id: 'e5-8', source: '5', target: '8', type: 'step' },
+  { id: 'e6-8', source: '6', target: '8', type: 'step' },
+  { id: 'e7-9', source: '7', target: '9', type: 'step' },
 ];
 
-const theme: Theme = {
-  canvas: {
-    background: 'rgba(9, 12, 20, 1)',
-    fog: '#1E2026',
-  },
-  node: {
-    fill: 'blue',
-    activeFill: 'rgb(192,21,252)',
-    opacity: 1,
-    selectedOpacity: 1,
-    inactiveOpacity: 0.3,
-    label: {
-      color: 'rgba(65, 74, 96, 1)',
-      activeColor: 'rgb(192,21,252)',
-      stroke: 0,
-    },
-  },
-  edge: {
-    fill: '#54616D',
-    activeFill: 'rgb(192,21,252)',
-    opacity: 1,
-    selectedOpacity: 1,
-    inactiveOpacity: 0.3,
-    label: {
-      color: 'rgba(65, 74, 96, 1)',
-      activeColor: 'blue',
-      fontSize: 6,
-      stroke: 0,
-    },
-  },
-  ring: {
-    fill: '',
-    activeFill: '',
-  },
-  arrow: {
-    fill: '#414a60',
-    activeFill: 'rgb(192,21,252)',
-  },
-  lasso: {
-    background: '',
-    border: '',
-  },
-};
-
-export { edges, nodes, theme };
+export { initialEdges, initialNodes };
