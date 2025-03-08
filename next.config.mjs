@@ -1,10 +1,17 @@
+/* eslint-disable no-undef */
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    optimizePackageImports: ['icon-library'],
-  },
-  compress: true,  
+    optimizeCss: true,
+    optimizePackageImports: ['justd-icons'],
+  }
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
