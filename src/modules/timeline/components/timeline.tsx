@@ -60,35 +60,35 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
     }))
     .sort((a, b) => a.position - b.position);
 
-  const barData = markers.flatMap((marker, index) => {
-    if (index === markers.length - 1) return [];
-    const numBars = marker.records.length;
-    const startPosition = markerData[index].position;
-    const endPosition = markerData[index + 1].position;
-    const barWidth = (endPosition - startPosition) / numBars;
+  const barData = markers
+    .flatMap((marker, index) => {
+      if (index === markers.length - 1) return [];
+      const numBars = marker.records.length;
+      const startPosition = markerData[index].position;
+      const endPosition = markerData[index + 1].position;
+      const barWidth = (endPosition - startPosition) / numBars;
 
-    return marker.records.map((record, recordIndex) => ({
-      position: startPosition + recordIndex * barWidth + barWidth / 2,
-      positionPercentage: (startPosition + recordIndex * barWidth + barWidth / 2 - thisOffset) / effectiveWidth,
-      value: record.value,
-    }));
-  });
+      return marker.records.map((record, recordIndex) => ({
+        position: startPosition + recordIndex * barWidth + barWidth / 2,
+        positionPercentage: (startPosition + recordIndex * barWidth + barWidth / 2 - thisOffset) / effectiveWidth,
+        value: record.value,
+      }));
+    })
+    .sort((a, b) => a.position - b.position);
 
-  const sortedBarData = [...barData].sort((a, b) => a.position - b.position);
-
-  const leftX = useMotionValue(sortedBarData[0]?.position ?? 0);
-  const rightX = useMotionValue(sortedBarData[sortedBarData.length - 1]?.position ?? 0);
+  const leftX = useMotionValue(barData[0]?.position ?? 0);
+  const rightX = useMotionValue(barData[barData.length - 1]?.position ?? 0);
   const highlightWidth = useTransform(() => rightX.get() - leftX.get());
 
   const snap = (x: number, isLeft: boolean, otherX: number) => {
-    const minDistance = sortedBarData.length > 1 ? sortedBarData[1].position - sortedBarData[0].position : 0;
+    const minDistance = barData.length > 1 ? barData[1].position - barData[0].position : 0;
     const possiblePositions = isLeft
-      ? sortedBarData.filter((data) => data.position <= otherX - minDistance).map((data) => data.position)
-      : sortedBarData.filter((data) => data.position >= otherX + minDistance).map((data) => data.position);
+      ? barData.filter((data) => data.position <= otherX - minDistance).map((data) => data.position)
+      : barData.filter((data) => data.position >= otherX + minDistance).map((data) => data.position);
 
     return possiblePositions.reduce(
       (p, c) => (Math.abs(c - x) < Math.abs(p - x) ? c : p),
-      isLeft ? (sortedBarData[0]?.position ?? 0) : (sortedBarData[sortedBarData.length - 1]?.position ?? 0),
+      isLeft ? (barData[0]?.position ?? 0) : (barData[barData.length - 1]?.position ?? 0),
     );
   };
 
@@ -115,7 +115,7 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
 
         <motion.div className='bg-chart-1/20 absolute h-full w-full' style={{ x: leftX, width: highlightWidth }} />
 
-        <div style={{ left: thisOffset, width: effectiveWidth, height: '100%' }}>
+        <div style={{ left: thisOffset, width: effectiveWidth, height: '100%' }} className='absolute inset-0'>
           <ResponsiveContainer width='100%' height='100%'>
             <BarChart data={barData} barCategoryGap={0} barGap={0}>
               <XAxis dataKey='positionPercentage' type='number' domain={[0, 1]} hide />
