@@ -158,9 +158,8 @@ type CustomBarProps = {
   y: number;
   width: number;
   height: number;
-  [key: string]: any;
 };
 
-const CustomBarShape = ({ x, y, width, height, ...props }: CustomBarProps) => {
-  return <rect x={x - 2.5} y={y + height / 2} width={width} height={height / 2} fill='var(--color-chart-1)' {...props} />;
+const CustomBarShape = ({ x, y, width, height }: CustomBarProps) => {
+  return <rect x={x - 2.5} y={y + height / 2} width={width} height={height / 2} fill='var(--color-chart-1)' />;
 };

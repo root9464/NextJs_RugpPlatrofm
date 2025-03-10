@@ -1,5 +1,6 @@
 'use client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
@@ -32,7 +33,10 @@ export function GlobalProvider({ children, ...props }: { children: Readonly<Reac
     <RouterProvider navigate={router.push}>
       <TonConnectUIProvider manifestUrl='https://taiga-labs.github.io/dexlot.json'>
         <NextThemesProvider enableSystem storageKey='justd-theme' defaultTheme='dark' {...props}>
-          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryClientProvider>
         </NextThemesProvider>
       </TonConnectUIProvider>
     </RouterProvider>

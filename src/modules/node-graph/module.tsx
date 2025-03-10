@@ -3,7 +3,11 @@ import Image from 'next/image';
 
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
-import { NodeGraph } from './components/node-graph';
+import dynamic from 'next/dynamic';
+
+const NodeGraph = dynamic(() => import('./components/node-graph').then((mod) => mod.NodeGraph), {
+  ssr: false,
+});
 
 export const NodeGraphModule = () => {
   return (

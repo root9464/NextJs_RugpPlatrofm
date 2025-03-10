@@ -79,44 +79,58 @@ const JettonsSchema = z.object({
 
 type AccountType = z.infer<typeof AccountSchema>;
 type JettonBalanceType = z.infer<typeof JettonBalanceSchema>;
+export type Jetton = {
+  balance: number;
+  image: string;
+  symbol: string;
+  decimals: number;
+  address: string;
+  price_ton: number;
+};
+
+export async function fetchUserBalance(address: string): Promise<Jetton[]> {
+  try {
+    const [accountResponse, jettonsResponse]: [AxiosResponse<AccountType> | null, AxiosResponse<JettonBalanceType> | null] = await Promise.all([
+      tonApiInstance.get(`/accounts/${address}`),
+      tonApiInstance.get(`/accounts/${address}/jettons?currencies=ton,usd`),
+    ]).catch((error: AxiosError) => {
+      throw new Error(`API fetch failed: ${error.message}`);
+    });
+    const account = validateResult(accountResponse.data, AccountSchema);
+    if (!account) throw new Error('Failed to fetch account data.');
+
+    const jettons = validateResult(jettonsResponse.data, JettonsSchema);
+
+    const tonBalance = {
+      balance: account.balance / 10 ** 9,
+      image: 'native',
+      symbol: 'TON',
+      decimals: 9,
+      address: account.address,
+      price_ton: account.balance / 10 ** 9,
+    };
+
+    const jettonBalances = jettons.balances.map((jetton) => ({
+      balance: Number(jetton.balance) / 10 ** jetton.jetton.decimals,
+      image: jetton.jetton.image,
+      symbol: jetton.jetton.symbol,
+      decimals: jetton.jetton.decimals,
+      address: jetton.jetton.address,
+      price_ton: jetton.price.prices.TON,
+    }));
+
+    return [tonBalance, ...jettonBalances];
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`API fetch failed: ${error.message}`);
+    }
+    throw error;
+  }
+}
 
 export const useUserBalance = (address: string) =>
   useQuery({
     queryKey: ['balance', address],
-    queryFn: async () => {
-      const [accountResponse, jettonsResponse]: [AxiosResponse<AccountType> | null, AxiosResponse<JettonBalanceType> | null] = await Promise.all([
-        tonApiInstance.get(`/accounts/${address}`),
-        tonApiInstance.get(`/accounts/${address}/jettons?currencies=ton,usd`),
-      ]).catch((error: AxiosError) => {
-        throw new Error(`API fetch failed: ${error.message}`);
-      });
-
-      const account = accountResponse && validateResult(accountResponse.data, AccountSchema);
-
-      if (!account) throw new Error('Failed to fetch account data.');
-
-      const jettons = jettonsResponse && validateResult(jettonsResponse.data, JettonsSchema);
-
-      const tonBalance = {
-        balance: account.balance / 10 ** 9,
-        image: 'native',
-        symbol: 'TON',
-        decimals: 9,
-        address: account.address,
-        price_ton: account.balance / 10 ** 9,
-      };
-
-      const jettonBalances = jettons.balances.map((jetton) => ({
-        balance: Number(jetton.balance) / 10 ** jetton.jetton.decimals,
-        image: jetton.jetton.image,
-        symbol: jetton.jetton.symbol,
-        decimals: jetton.jetton.decimals,
-        address: jetton.jetton.address,
-        price_ton: jetton.price.prices.TON,
-      }));
-
-      return [tonBalance, ...jettonBalances];
-    },
-
+    queryFn: async () => await fetchUserBalance(address),
     enabled: !!address,
   });
