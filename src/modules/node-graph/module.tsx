@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
+import { ReactFlowProvider } from '@xyflow/react';
 import dynamic from 'next/dynamic';
 
 const NodeGraph = dynamic(() => import('./components/node-graph').then((mod) => mod.NodeGraph), {
@@ -20,7 +21,9 @@ export const NodeGraphModule = () => {
           </div>
         </Card.Header>
         <Card.Content className='relative z-0 h-full w-full border-none px-0'>
-          <NodeGraph />
+          <ReactFlowProvider>
+            <NodeGraph />
+          </ReactFlowProvider>
         </Card.Content>
       </Card>
     </div>

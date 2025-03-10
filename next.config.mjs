@@ -10,7 +10,29 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
   experimental: {
     optimizePackageImports: ['recharts, rxjs'],
-  }
+  },
+
+  swcMinify: true,
+  reactStrictMode: true,
+  webpack: (config) => {
+    config.optimization.splitChunks = {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/](@xyflow|recharts|rxjs)[\\/]/,
+          name: 'vendor-libs',
+          chunks: 'all',
+          priority: -10,
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+      },
+    };
+    return config;
+  },
 };
 
 export default withBundleAnalyzer(nextConfig);

@@ -12,13 +12,15 @@ import {
   useNodesState,
   type OnConnect,
 } from '@xyflow/react';
-import { useCallback } from 'react';
-
 import '@xyflow/react/dist/base.css';
+import { useCallback, useMemo } from 'react';
 import { initialEdges, initialNodes } from '../constants/consts';
 import { EdgeComponent } from '../slices/edge';
 import { NodeComponent } from '../slices/node';
 import '../style/style.css';
+
+const NODE_SPACING = 250;
+const MAIN_NODE_ID = '1';
 
 const nodeTypes: NodeTypes = {
   turbo: NodeComponent,
@@ -33,24 +35,89 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
   markerEnd: 'edge-circle',
 };
 
+const getCircularPosition = (center: Node, nodes: Node[], radius: number) => {
+  const angleStep = (2 * Math.PI) / nodes.length;
+  return nodes.map((node, idx) => ({
+    ...node,
+    position: {
+      x: center.position.x + radius * Math.cos(angleStep * idx),
+      y: center.position.y + radius * Math.sin(angleStep * idx),
+    },
+  }));
+};
+
+const calculateDirection = (parent: Node, mainNode: Node, offset: number) => {
+  const dx = parent.position.x - mainNode.position.x;
+  const dy = parent.position.y - mainNode.position.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  if (distance === 0) {
+    return {
+      x: parent.position.x + offset,
+      y: parent.position.y,
+    };
+  }
+
+  const scale = offset / distance;
+  return {
+    x: parent.position.x + dx * scale,
+    y: parent.position.y + dy * scale,
+  };
+};
+
 export const NodeGraph = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  const onConnect: OnConnect = useCallback((params) => setEdges((els) => addEdge({ ...params, type: 'turbo' }, els)), [setEdges]);
-  const onNodeClick = useCallback<NodeMouseHandler>(
-    (_, node: Node) => {
-      const newNodeId = `${Date.now()}`;
-      const mainNodeId = '1';
-      const mainNode = nodes.find((n) => n.id === mainNodeId);
+  const mainNode = useMemo(() => nodes.find((n) => n.id === MAIN_NODE_ID), [nodes]);
 
+  const onConnect: OnConnect = useCallback((params) => setEdges((els) => addEdge({ ...params, type: 'turbo' }, els)), [setEdges]);
+
+  const hasCollision = useCallback(
+    (position: { x: number; y: number }, ignoreId?: string) => {
+      return nodes.some((node) => {
+        if (node.id === ignoreId) return false;
+        const dx = node.position.x - position.x;
+        const dy = node.position.y - position.y;
+        return Math.sqrt(dx * dx + dy * dy) < NODE_SPACING;
+      });
+    },
+    [nodes],
+  );
+
+  const calculatePosition = useCallback(
+    (parent: Node, mainNode: Node) => {
+      let position = calculateDirection(parent, mainNode, NODE_SPACING);
+      let angle = 0;
+      let attempts = 0;
+
+      while (hasCollision(position) && attempts < 12) {
+        angle += (Math.PI * 2) / 12;
+        position = {
+          x: parent.position.x + NODE_SPACING * Math.cos(angle),
+          y: parent.position.y + NODE_SPACING * Math.sin(angle),
+        };
+        attempts++;
+      }
+
+      return position;
+    },
+    [hasCollision],
+  );
+
+  const onNodeClick = useCallback<NodeMouseHandler>(
+    (_, node) => {
       if (!mainNode) return;
+
+      const isMainNode = node.id === MAIN_NODE_ID;
+      const newNodeId = `${Date.now()}`;
 
       const newNode: Node = {
         id: newNodeId,
         position: { x: 0, y: 0 },
         data: { title: 'New Node', subline: 'Child' },
         type: 'turbo',
+        className: isMainNode ? 'hidden' : '',
       };
 
       const newEdge = {
@@ -60,38 +127,23 @@ export const NodeGraph = () => {
         type: 'turbo',
       };
 
-      const offset = 250;
+      if (isMainNode) {
+        const updatedNodes = [...nodes, newNode];
+        const updatedEdges = [...edges, newEdge];
+        const childNodes = updatedNodes.filter((n) => updatedEdges.some((e) => e.source === MAIN_NODE_ID && e.target === n.id));
 
-      if (node.id === mainNodeId) {
-        const randomAngle = Math.random() * 2 * Math.PI;
-        newNode.position = {
-          x: mainNode.position.x + offset * Math.cos(randomAngle),
-          y: mainNode.position.y + offset * Math.sin(randomAngle),
-        };
+        const arrangedNodes = getCircularPosition(mainNode, childNodes, NODE_SPACING);
+        const finalNodes = updatedNodes.map((n) => arrangedNodes.find((rn) => rn.id === n.id) || n);
+
+        setNodes(finalNodes.map((n) => (n.id === newNodeId ? { ...n, className: '' } : n)));
+        setEdges(updatedEdges);
       } else {
-        const dx = node.position.x - mainNode.position.x;
-        const dy = node.position.y - mainNode.position.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance === 0) {
-          newNode.position = {
-            x: node.position.x + offset,
-            y: node.position.y,
-          };
-        } else {
-          const normalizedDx = (dx / distance) * offset;
-          const normalizedDy = (dy / distance) * offset;
-          newNode.position = {
-            x: node.position.x + normalizedDx,
-            y: node.position.y + normalizedDy,
-          };
-        }
+        newNode.position = calculatePosition(node, mainNode);
+        setNodes((nds) => [...nds, newNode]);
+        setEdges((eds) => [...eds, newEdge]);
       }
-
-      setNodes((nds) => [...nds, newNode]);
-      setEdges((eds) => [...eds, newEdge]);
     },
-    [setNodes, setEdges, nodes],
+    [nodes, edges, mainNode, setNodes, setEdges, calculatePosition],
   );
 
   return (
@@ -115,7 +167,6 @@ export const NodeGraph = () => {
             <stop offset='50%' stopColor='#a853ba' />
             <stop offset='100%' stopColor='#2a8af6' />
           </linearGradient>
-
           <marker
             id='edge-circle'
             viewBox='-5 -5 10 10'
