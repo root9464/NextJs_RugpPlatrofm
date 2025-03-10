@@ -1,4 +1,4 @@
-import { NodeGraph } from '@/modules/node-graph/components/node-graph';
+import { NodeGraphModule } from '@/modules/node-graph/module';
 import { PageLayout } from '@components/layouts/page.layout';
 
 export default function Home() {
@@ -6,7 +6,9 @@ export default function Home() {
     <PageLayout className=''>
       <h1>home</h1>
 
-      <NodeGraph />
+      <div className='h-screen w-screen'>
+        <NodeGraphModule />
+      </div>
     </PageLayout>
   );
 }

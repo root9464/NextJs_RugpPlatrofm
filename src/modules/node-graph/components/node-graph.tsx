@@ -9,18 +9,20 @@ import {
   NodeTypes,
   ReactFlow,
   useEdgesState,
+  useNodesInitialized,
   useNodesState,
+  useReactFlow,
   type OnConnect,
 } from '@xyflow/react';
 import '@xyflow/react/dist/base.css';
-import { useCallback, useMemo } from 'react';
+import ELK from 'elkjs/lib/elk.bundled.js';
+import { useCallback, useEffect } from 'react';
 import { initialEdges, initialNodes } from '../constants/consts';
 import { EdgeComponent } from '../slices/edge';
 import { NodeComponent } from '../slices/node';
 import '../style/style.css';
 
-const NODE_SPACING = 250;
-const MIN_DISTANCE = 150;
+const elk = new ELK();
 const MAIN_NODE_ID = '1';
 
 const nodeTypes: NodeTypes = {
@@ -36,66 +38,75 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
   markerEnd: 'edge-circle',
 };
 
-const getCircularPosition = (center: Node, nodes: Node[], radius: number) => {
-  const angleStep = (2 * Math.PI) / Math.max(nodes.length, 1);
-  return nodes.map((node, idx) => ({
-    ...node,
-    position: {
-      x: center.position.x + radius * Math.cos(angleStep * idx),
-      y: center.position.y + radius * Math.sin(angleStep * idx),
-    },
-  }));
-};
+const useLayout = () => {
+  const { getNodes, setNodes, getEdges, fitView } = useReactFlow();
+  const initialized = useNodesInitialized();
 
-const resolveCollisions = (nodes: Node[], newNode: Node): Node[] => {
-  const updatedNodes = [...nodes];
-  let hasCollision = true;
-  let iterations = 0;
-  const maxIterations = 50;
+  const runLayout = useCallback(async () => {
+    const nodes = getNodes();
+    const edges = getEdges();
 
-  while (hasCollision && iterations < maxIterations) {
-    hasCollision = false;
-    for (let i = 0; i < updatedNodes.length; i++) {
-      if (updatedNodes[i].id === newNode.id) continue;
+    const graph = {
+      id: 'root',
+      layoutOptions: {
+        'elk.algorithm': 'org.eclipse.elk.force',
+        'elk.spacing.nodeNode': '100',
+        'elk.force.repulsion': '2000',
+      },
+      children: nodes.map((node) => ({
+        ...node,
+        width: node.measured?.width || 150,
+        height: node.measured?.height || 50,
+      })),
+      edges: edges.map((edge) => ({
+        ...edge,
+        sources: [edge.source],
+        targets: [edge.target],
+      })),
+    };
 
-      const dx = updatedNodes[i].position.x - newNode.position.x;
-      const dy = updatedNodes[i].position.y - newNode.position.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance < MIN_DISTANCE && distance > 0) {
-        hasCollision = true;
-        const pushFactor = ((MIN_DISTANCE - distance) / distance) * 0.5;
-        updatedNodes[i].position.x += dx * pushFactor;
-        updatedNodes[i].position.y += dy * pushFactor;
-        newNode.position.x -= dx * pushFactor;
-        newNode.position.y -= dy * pushFactor;
-      }
+    try {
+      const layoutedGraph = await elk.layout(graph);
+      setNodes(
+        layoutedGraph.children?.map((node) => ({
+          ...node,
+          position: { x: node.x, y: node.y },
+        })) || [],
+      );
+      window.requestAnimationFrame(() => fitView());
+    } catch (err) {
+      console.error('Layout error:', err);
     }
-    iterations++;
-  }
+  }, [getNodes, getEdges, setNodes, fitView]);
 
-  return updatedNodes;
+  return { runLayout, initialized };
 };
 
 export const NodeGraph = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const { runLayout, initialized } = useLayout();
 
-  const mainNode = useMemo(() => nodes.find((n) => n.id === MAIN_NODE_ID), [nodes]);
+  useEffect(() => {
+    if (initialized) {
+      runLayout();
+    }
+  }, [initialized, runLayout]);
 
   const onConnect: OnConnect = useCallback((params) => setEdges((els) => addEdge({ ...params, type: 'custom' }, els)), [setEdges]);
 
   const onNodeClick = useCallback<NodeMouseHandler>(
-    (_, clickedNode) => {
+    async (_, clickedNode) => {
+      const newNodeId = `${Date.now()}`;
+      const mainNode = nodes.find((n) => n.id === MAIN_NODE_ID);
+
       if (!mainNode) return;
 
-      const newNodeId = `${Date.now()}`;
       const newNode: Node = {
         id: newNodeId,
-        position: { x: 0, y: 0 },
+        position: mainNode.position,
         data: { title: 'New Node', subline: 'Child' },
         type: 'custom',
-        className: '',
       };
 
       const newEdge = {
@@ -105,21 +116,13 @@ export const NodeGraph = () => {
         type: 'custom',
       };
 
-      const childEdges = edges.filter((e) => e.source === clickedNode.id);
-      const childNodes = nodes.filter((n) => childEdges.some((e) => e.target === n.id)).concat(newNode);
-      const arrangedNodes = getCircularPosition(clickedNode, childNodes, NODE_SPACING);
-      const updatedNodes = nodes
-        .map((node) => {
-          const arrangedNode = arrangedNodes.find((n) => n.id === node.id);
-          return arrangedNode || node;
-        })
-        .filter((n) => n.id !== newNode.id);
-      const finalNodes = resolveCollisions(updatedNodes, arrangedNodes[arrangedNodes.length - 1]);
-
-      setNodes([...finalNodes, arrangedNodes[arrangedNodes.length - 1]]);
+      setNodes((nds) => [...nds, newNode]);
       setEdges((eds) => [...eds, newEdge]);
+
+      // Запускаем перерасчет layout после добавления нового узла
+      setTimeout(runLayout, 50);
     },
-    [nodes, edges, mainNode, setNodes, setEdges],
+    [nodes, setNodes, setEdges, runLayout],
   );
 
   return (
