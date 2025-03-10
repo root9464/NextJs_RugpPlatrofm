@@ -20,23 +20,24 @@ import { NodeComponent } from '../slices/node';
 import '../style/style.css';
 
 const NODE_SPACING = 250;
+const MIN_DISTANCE = 150;
 const MAIN_NODE_ID = '1';
 
 const nodeTypes: NodeTypes = {
-  turbo: NodeComponent,
+  custom: NodeComponent,
 };
 
 const edgeTypes: EdgeTypes = {
-  turbo: EdgeComponent,
+  custom: EdgeComponent,
 };
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
-  type: 'turbo',
+  type: 'custom',
   markerEnd: 'edge-circle',
 };
 
 const getCircularPosition = (center: Node, nodes: Node[], radius: number) => {
-  const angleStep = (2 * Math.PI) / nodes.length;
+  const angleStep = (2 * Math.PI) / Math.max(nodes.length, 1);
   return nodes.map((node, idx) => ({
     ...node,
     position: {
@@ -46,23 +47,34 @@ const getCircularPosition = (center: Node, nodes: Node[], radius: number) => {
   }));
 };
 
-const calculateDirection = (parent: Node, mainNode: Node, offset: number) => {
-  const dx = parent.position.x - mainNode.position.x;
-  const dy = parent.position.y - mainNode.position.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
+const resolveCollisions = (nodes: Node[], newNode: Node): Node[] => {
+  const updatedNodes = [...nodes];
+  let hasCollision = true;
+  let iterations = 0;
+  const maxIterations = 50;
 
-  if (distance === 0) {
-    return {
-      x: parent.position.x + offset,
-      y: parent.position.y,
-    };
+  while (hasCollision && iterations < maxIterations) {
+    hasCollision = false;
+    for (let i = 0; i < updatedNodes.length; i++) {
+      if (updatedNodes[i].id === newNode.id) continue;
+
+      const dx = updatedNodes[i].position.x - newNode.position.x;
+      const dy = updatedNodes[i].position.y - newNode.position.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < MIN_DISTANCE && distance > 0) {
+        hasCollision = true;
+        const pushFactor = ((MIN_DISTANCE - distance) / distance) * 0.5;
+        updatedNodes[i].position.x += dx * pushFactor;
+        updatedNodes[i].position.y += dy * pushFactor;
+        newNode.position.x -= dx * pushFactor;
+        newNode.position.y -= dy * pushFactor;
+      }
+    }
+    iterations++;
   }
 
-  const scale = offset / distance;
-  return {
-    x: parent.position.x + dx * scale,
-    y: parent.position.y + dy * scale,
-  };
+  return updatedNodes;
 };
 
 export const NodeGraph = () => {
@@ -71,79 +83,43 @@ export const NodeGraph = () => {
 
   const mainNode = useMemo(() => nodes.find((n) => n.id === MAIN_NODE_ID), [nodes]);
 
-  const onConnect: OnConnect = useCallback((params) => setEdges((els) => addEdge({ ...params, type: 'turbo' }, els)), [setEdges]);
-
-  const hasCollision = useCallback(
-    (position: { x: number; y: number }, ignoreId?: string) => {
-      return nodes.some((node) => {
-        if (node.id === ignoreId) return false;
-        const dx = node.position.x - position.x;
-        const dy = node.position.y - position.y;
-        return Math.sqrt(dx * dx + dy * dy) < NODE_SPACING;
-      });
-    },
-    [nodes],
-  );
-
-  const calculatePosition = useCallback(
-    (parent: Node, mainNode: Node) => {
-      let position = calculateDirection(parent, mainNode, NODE_SPACING);
-      let angle = 0;
-      let attempts = 0;
-
-      while (hasCollision(position) && attempts < 12) {
-        angle += (Math.PI * 2) / 12;
-        position = {
-          x: parent.position.x + NODE_SPACING * Math.cos(angle),
-          y: parent.position.y + NODE_SPACING * Math.sin(angle),
-        };
-        attempts++;
-      }
-
-      return position;
-    },
-    [hasCollision],
-  );
+  const onConnect: OnConnect = useCallback((params) => setEdges((els) => addEdge({ ...params, type: 'custom' }, els)), [setEdges]);
 
   const onNodeClick = useCallback<NodeMouseHandler>(
-    (_, node) => {
+    (_, clickedNode) => {
       if (!mainNode) return;
 
-      const isMainNode = node.id === MAIN_NODE_ID;
       const newNodeId = `${Date.now()}`;
-
       const newNode: Node = {
         id: newNodeId,
         position: { x: 0, y: 0 },
         data: { title: 'New Node', subline: 'Child' },
-        type: 'turbo',
-        className: isMainNode ? 'hidden' : '',
+        type: 'custom',
+        className: '',
       };
 
       const newEdge = {
-        id: `e${node.id}-${newNodeId}`,
-        source: node.id,
+        id: `e${clickedNode.id}-${newNodeId}`,
+        source: clickedNode.id,
         target: newNodeId,
-        type: 'turbo',
+        type: 'custom',
       };
 
-      if (isMainNode) {
-        const updatedNodes = [...nodes, newNode];
-        const updatedEdges = [...edges, newEdge];
-        const childNodes = updatedNodes.filter((n) => updatedEdges.some((e) => e.source === MAIN_NODE_ID && e.target === n.id));
+      const childEdges = edges.filter((e) => e.source === clickedNode.id);
+      const childNodes = nodes.filter((n) => childEdges.some((e) => e.target === n.id)).concat(newNode);
+      const arrangedNodes = getCircularPosition(clickedNode, childNodes, NODE_SPACING);
+      const updatedNodes = nodes
+        .map((node) => {
+          const arrangedNode = arrangedNodes.find((n) => n.id === node.id);
+          return arrangedNode || node;
+        })
+        .filter((n) => n.id !== newNode.id);
+      const finalNodes = resolveCollisions(updatedNodes, arrangedNodes[arrangedNodes.length - 1]);
 
-        const arrangedNodes = getCircularPosition(mainNode, childNodes, NODE_SPACING);
-        const finalNodes = updatedNodes.map((n) => arrangedNodes.find((rn) => rn.id === n.id) || n);
-
-        setNodes(finalNodes.map((n) => (n.id === newNodeId ? { ...n, className: '' } : n)));
-        setEdges(updatedEdges);
-      } else {
-        newNode.position = calculatePosition(node, mainNode);
-        setNodes((nds) => [...nds, newNode]);
-        setEdges((eds) => [...eds, newEdge]);
-      }
+      setNodes([...finalNodes, arrangedNodes[arrangedNodes.length - 1]]);
+      setEdges((eds) => [...eds, newEdge]);
     },
-    [nodes, edges, mainNode, setNodes, setEdges, calculatePosition],
+    [nodes, edges, mainNode, setNodes, setEdges],
   );
 
   return (
