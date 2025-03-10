@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import {
   addEdge,
@@ -15,7 +16,7 @@ import {
   type OnConnect,
 } from '@xyflow/react';
 import '@xyflow/react/dist/base.css';
-import ELK from 'elkjs/lib/elk.bundled.js';
+import ELK, { ElkNode } from 'elkjs/lib/elk.bundled.js';
 import { useCallback, useEffect } from 'react';
 import { initialEdges, initialNodes } from '../constants/consts';
 import { EdgeComponent } from '../slices/edge';
@@ -38,6 +39,13 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
   markerEnd: 'edge-circle',
 };
 
+interface CustomElkNode extends ElkNode {
+  data?: Record<string, any>;
+  type?: string;
+  measured?: { width: number; height: number };
+  className?: string;
+}
+
 const useLayout = () => {
   const { getNodes, setNodes, getEdges, fitView } = useReactFlow();
   const initialized = useNodesInitialized();
@@ -51,15 +59,19 @@ const useLayout = () => {
       layoutOptions: {
         'elk.algorithm': 'org.eclipse.elk.force',
         'elk.spacing.nodeNode': '100',
-        'elk.force.repulsion': '2000',
       },
       children: nodes.map((node) => ({
-        ...node,
+        id: node.id,
         width: node.measured?.width || 150,
         height: node.measured?.height || 50,
-      })),
+        // Добавляем кастомные свойства для последующего восстановления
+        data: node.data,
+        type: node.type,
+        className: node.className,
+        measured: node.measured,
+      })) as CustomElkNode[],
       edges: edges.map((edge) => ({
-        ...edge,
+        id: edge.id,
         sources: [edge.source],
         targets: [edge.target],
       })),
@@ -67,12 +79,24 @@ const useLayout = () => {
 
     try {
       const layoutedGraph = await elk.layout(graph);
-      setNodes(
-        layoutedGraph.children?.map((node) => ({
-          ...node,
-          position: { x: node.x, y: node.y },
-        })) || [],
+      const elkNodes = (layoutedGraph.children as CustomElkNode[]) || [];
+
+      setNodes((prevNodes) =>
+        prevNodes.map((prevNode) => {
+          const elkNode = elkNodes.find((n) => n.id === prevNode.id);
+
+          return elkNode
+            ? {
+                ...prevNode,
+                position: {
+                  x: elkNode.x ?? prevNode.position.x,
+                  y: elkNode.y ?? prevNode.position.y,
+                },
+              }
+            : prevNode;
+        }),
       );
+
       window.requestAnimationFrame(() => fitView());
     } catch (err) {
       console.error('Layout error:', err);
