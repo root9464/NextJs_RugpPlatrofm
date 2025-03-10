@@ -1,6 +1,17 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
-import { addEdge, Controls, ReactFlow, useEdgesState, useNodesState, type OnConnect } from '@xyflow/react';
+import {
+  addEdge,
+  Controls,
+  DefaultEdgeOptions,
+  EdgeTypes,
+  Node,
+  NodeMouseHandler,
+  NodeTypes,
+  ReactFlow,
+  useEdgesState,
+  useNodesState,
+  type OnConnect,
+} from '@xyflow/react';
 import { useCallback } from 'react';
 
 import '@xyflow/react/dist/base.css';
@@ -9,24 +20,79 @@ import { EdgeComponent } from '../slices/edge';
 import { NodeComponent } from '../slices/node';
 import '../style/style.css';
 
-const nodeTypes = {
+const nodeTypes: NodeTypes = {
   turbo: NodeComponent,
 };
 
-const edgeTypes = {
+const edgeTypes: EdgeTypes = {
   turbo: EdgeComponent,
 };
 
-const defaultEdgeOptions = {
+const defaultEdgeOptions: DefaultEdgeOptions = {
   type: 'turbo',
   markerEnd: 'edge-circle',
 };
 
 export const NodeGraph = () => {
-  const [nodes, _, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  const onConnect: OnConnect = useCallback((params) => setEdges((els) => addEdge(params, els)), [setEdges]);
+  const onConnect: OnConnect = useCallback((params) => setEdges((els) => addEdge({ ...params, type: 'turbo' }, els)), [setEdges]);
+  const onNodeClick = useCallback<NodeMouseHandler>(
+    (_, node: Node) => {
+      const newNodeId = `${Date.now()}`;
+      const mainNodeId = '1';
+      const mainNode = nodes.find((n) => n.id === mainNodeId);
+
+      if (!mainNode) return;
+
+      const newNode: Node = {
+        id: newNodeId,
+        position: { x: 0, y: 0 },
+        data: { title: 'New Node', subline: 'Child' },
+        type: 'turbo',
+      };
+
+      const newEdge = {
+        id: `e${node.id}-${newNodeId}`,
+        source: node.id,
+        target: newNodeId,
+        type: 'turbo',
+      };
+
+      const offset = 250;
+
+      if (node.id === mainNodeId) {
+        const randomAngle = Math.random() * 2 * Math.PI;
+        newNode.position = {
+          x: mainNode.position.x + offset * Math.cos(randomAngle),
+          y: mainNode.position.y + offset * Math.sin(randomAngle),
+        };
+      } else {
+        const dx = node.position.x - mainNode.position.x;
+        const dy = node.position.y - mainNode.position.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance === 0) {
+          newNode.position = {
+            x: node.position.x + offset,
+            y: node.position.y,
+          };
+        } else {
+          const normalizedDx = (dx / distance) * offset;
+          const normalizedDy = (dy / distance) * offset;
+          newNode.position = {
+            x: node.position.x + normalizedDx,
+            y: node.position.y + normalizedDy,
+          };
+        }
+      }
+
+      setNodes((nds) => [...nds, newNode]);
+      setEdges((eds) => [...eds, newEdge]);
+    },
+    [setNodes, setEdges, nodes],
+  );
 
   return (
     <ReactFlow
@@ -34,6 +100,7 @@ export const NodeGraph = () => {
       edges={edges}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
+      onNodeClick={onNodeClick}
       onConnect={onConnect}
       fitView
       nodeTypes={nodeTypes}
