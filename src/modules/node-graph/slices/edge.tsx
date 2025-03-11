@@ -1,4 +1,4 @@
-import { getBezierPath, useInternalNode, type EdgeProps } from '@xyflow/react';
+import { useInternalNode, type EdgeProps } from '@xyflow/react';
 import { getEdgeParams } from '../utils/utils';
 
 export const EdgeComponent = ({ id, source, target, style = {}, markerEnd }: EdgeProps) => {
@@ -9,16 +9,9 @@ export const EdgeComponent = ({ id, source, target, style = {}, markerEnd }: Edg
     return null;
   }
 
-  const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(sourceNode, targetNode);
+  const { sx, sy, tx, ty } = getEdgeParams(sourceNode, targetNode);
 
-  const [edgePath] = getBezierPath({
-    sourceX: sx,
-    sourceY: sy,
-    sourcePosition: sourcePos,
-    targetX: tx,
-    targetY: ty,
-    targetPosition: targetPos,
-  });
+  const edgePath = `M ${sx},${sy} L ${tx},${ty}`;
 
   return <path id={id} style={style} className='react-flow__edge-path' d={edgePath} markerEnd={markerEnd} stroke='url(#edge-gradient)' />;
 };
