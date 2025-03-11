@@ -1,6 +1,5 @@
 import { PageLayout } from '@/components/layouts/page.layout';
 import { fetchUserBalance } from '@/modules/balance/hooks/useUserBalance';
-import { NodeGraphModule } from '@/modules/node-graph/module';
 import { TimeLineModule } from '@/modules/timeline/module';
 import { ProfileModule } from '@modules/profile/module';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
@@ -41,7 +40,6 @@ export default async function IndexatorPage({ params }: { params: { address: str
 
             <div className='flex h-full w-full flex-col gap-5'>
               <HistoryBalanceModule />
-              <NodeGraphModule />
             </div>
           </div>
 

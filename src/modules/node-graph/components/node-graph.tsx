@@ -18,10 +18,13 @@ import { initialEdges, initialNodes } from '../constants/consts';
 import { EdgeComponent } from '../slices/edge';
 import { NodeComponent } from '../slices/node';
 import '../style/style.css';
+import { getCircularPosition, resolveCollisions } from '../utils/utils';
 
-const NODE_SPACING = 250;
-const MIN_DISTANCE = 150;
+const NODE_SPACING = 300;
+const MIN_DISTANCE = 200;
 const MAIN_NODE_ID = '1';
+const MAX_NODES_PER_ORBIT = 100;
+const ORBIT_SPACING = 250;
 
 const nodeTypes: NodeTypes = {
   custom: NodeComponent,
@@ -34,65 +37,6 @@ const edgeTypes: EdgeTypes = {
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: 'custom',
   markerEnd: 'edge-circle',
-};
-
-const getCircularPosition = (center: Node, nodes: Node[]) => {
-  const numberOfChildren = nodes.length;
-  let radius;
-  if (numberOfChildren <= 1) {
-    radius = NODE_SPACING;
-  } else {
-    radius = MIN_DISTANCE / (2 * Math.sin(Math.PI / numberOfChildren));
-  }
-  const angleStep = (2 * Math.PI) / Math.max(numberOfChildren, 1);
-  return nodes.map((node, idx) => ({
-    ...node,
-    position: {
-      x: center.position.x + radius * Math.cos(angleStep * idx),
-      y: center.position.y + radius * Math.sin(angleStep * idx),
-    },
-  }));
-};
-
-const resolveCollisions = (nodes: Node[]): Node[] => {
-  const updatedNodes = [...nodes];
-  let hasCollision = true;
-  let iterations = 0;
-  const maxIterations = 100;
-
-  while (hasCollision && iterations < maxIterations) {
-    hasCollision = false;
-    for (let i = 0; i < updatedNodes.length; i++) {
-      for (let j = i + 1; j < updatedNodes.length; j++) {
-        const nodeA = updatedNodes[i];
-        const nodeB = updatedNodes[j];
-        const dx = nodeA.position.x - nodeB.position.x;
-        const dy = nodeA.position.y - nodeB.position.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < MIN_DISTANCE && distance > 0) {
-          hasCollision = true;
-          const pushFactor = ((MIN_DISTANCE - distance) / distance) * 0.5;
-          const pushX = dx * pushFactor;
-          const pushY = dy * pushFactor;
-          if (nodeA.id === MAIN_NODE_ID) {
-            updatedNodes[j].position.x -= 2 * pushX;
-            updatedNodes[j].position.y -= 2 * pushY;
-          } else if (nodeB.id === MAIN_NODE_ID) {
-            updatedNodes[i].position.x += 2 * pushX;
-            updatedNodes[i].position.y += 2 * pushY;
-          } else {
-            updatedNodes[i].position.x += pushX;
-            updatedNodes[i].position.y += pushY;
-            updatedNodes[j].position.x -= pushX;
-            updatedNodes[j].position.y -= pushY;
-          }
-        }
-      }
-    }
-    iterations++;
-  }
-
-  return updatedNodes;
 };
 
 export const NodeGraph = () => {
@@ -113,7 +57,6 @@ export const NodeGraph = () => {
         position: { x: 0, y: 0 },
         data: { title: 'New Node', subline: 'Child' },
         type: 'custom',
-        className: '',
       };
 
       const newEdge = {
@@ -125,17 +68,15 @@ export const NodeGraph = () => {
 
       const childEdges = edges.filter((e) => e.source === clickedNode.id);
       const childNodes = nodes.filter((n) => childEdges.some((e) => e.target === n.id)).concat(newNode);
-      const arrangedNodes = getCircularPosition(clickedNode, childNodes);
+      const arrangedNodes = getCircularPosition(clickedNode, childNodes, edges, nodes, NODE_SPACING, MAX_NODES_PER_ORBIT, ORBIT_SPACING);
 
-      const updatedNodes = nodes.map((node) => {
-        const arrangedNode = arrangedNodes.find((n) => n.id === node.id);
-        return arrangedNode ? { ...node, position: arrangedNode.position } : node;
-      });
+      const updatedNodes = nodes.map((node) => arrangedNodes.find((n) => n.id === node.id) || node);
 
-      const newArrangedNode = arrangedNodes.find((n) => n.id === newNode.id);
-      const allNodes = [...updatedNodes, newArrangedNode!];
-
-      const finalNodes = resolveCollisions(allNodes);
+      const finalNodes = resolveCollisions(
+        [...updatedNodes, ...arrangedNodes.filter((n) => !updatedNodes.some((un) => un.id === n.id))],
+        MIN_DISTANCE,
+        mainNode.id,
+      );
 
       setNodes(finalNodes);
       setEdges((eds) => [...eds, newEdge]);

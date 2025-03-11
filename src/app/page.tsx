@@ -6,7 +6,9 @@ export default function Home() {
     <PageLayout className=''>
       <h1>home</h1>
 
-      <NodeGraph />
+      <div className='h-screen w-screen'>
+        <NodeGraph />
+      </div>
     </PageLayout>
   );
 }

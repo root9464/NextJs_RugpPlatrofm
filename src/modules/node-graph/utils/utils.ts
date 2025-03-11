@@ -1,4 +1,4 @@
-import { InternalNode, Node, Position } from '@xyflow/react';
+import { Edge, InternalNode, Node, Position } from '@xyflow/react';
 
 const getNodeIntersection = (intersectionNode: InternalNode<Node>, targetNode: InternalNode<Node>) => {
   const { width: intersectionNodeWidth = 0, height: intersectionNodeHeight = 0 } = intersectionNode.measured;
@@ -47,7 +47,7 @@ const getEdgePosition = (node: InternalNode<Node>, intersectionPoint: { x: numbe
   return Position.Top;
 };
 
-export function getEdgeParams(source: InternalNode<Node>, target: InternalNode<Node>) {
+export const getEdgeParams = (source: InternalNode<Node>, target: InternalNode<Node>) => {
   const sourceIntersectionPoint = getNodeIntersection(source, target);
   const targetIntersectionPoint = getNodeIntersection(target, source);
 
@@ -62,4 +62,83 @@ export function getEdgeParams(source: InternalNode<Node>, target: InternalNode<N
     sourcePos,
     targetPos,
   };
-}
+};
+
+export const resolveCollisions = (nodes: Node[], minDistance: number, mainNodeId: string) => {
+  const nodeMap = new Map<string, Node>(nodes.map((n) => [n.id, { ...n }]));
+  const REPULSE_FORCE = 0.15;
+  const MAX_ITERATIONS = 150;
+
+  for (let iter = 0; iter < MAX_ITERATIONS; iter++) {
+    let hasCollision = false;
+
+    nodes.forEach((nodeA, i) => {
+      nodes.forEach((nodeB, j) => {
+        if (i >= j) return;
+
+        const dx = nodeA.position.x - nodeB.position.x;
+        const dy = nodeA.position.y - nodeB.position.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < minDistance) {
+          hasCollision = true;
+          const force = ((minDistance - distance) / distance) * REPULSE_FORCE;
+
+          const updateNode = (node: Node, fx: number, fy: number) => {
+            const updated = nodeMap.get(node.id)!;
+            updated.position.x += fx;
+            updated.position.y += fy;
+            nodeMap.set(node.id, updated);
+          };
+
+          if (nodeA.id !== mainNodeId) updateNode(nodeA, dx * force, dy * force);
+          if (nodeB.id !== mainNodeId) updateNode(nodeB, -dx * force, -dy * force);
+        }
+      });
+    });
+
+    if (!hasCollision) break;
+  }
+
+  return Array.from(nodeMap.values());
+};
+
+export const getCircularPosition = (
+  center: Node,
+  nodes: Node[],
+  edges: Edge[],
+  allNodes: Node[],
+  nodeSpacing: number,
+  maxNodePerOrbit: number,
+  orbitSpacing: number,
+) => {
+  const parentEdge = edges.find((e) => e.target === center.id);
+  const parentNode = parentEdge ? allNodes.find((n) => n.id === parentEdge.source) : null;
+  const baseAngle = parentNode ? Math.atan2(center.position.y - parentNode.position.y, center.position.x - parentNode.position.x) : -Math.PI;
+
+  const totalChildren = nodes.length;
+  const radius = nodeSpacing + Math.floor((totalChildren - 1) / maxNodePerOrbit) * orbitSpacing;
+
+  return nodes.map((node, idx) => {
+    if (totalChildren === 1) {
+      return {
+        ...node,
+        position: {
+          x: center.position.x + radius * Math.cos(baseAngle),
+          y: center.position.y + radius * Math.sin(baseAngle),
+        },
+      };
+    }
+
+    const angleStep = (2 * Math.PI) / totalChildren;
+    const angle = baseAngle + angleStep * idx;
+
+    return {
+      ...node,
+      position: {
+        x: center.position.x + radius * Math.cos(angle),
+        y: center.position.y + radius * Math.sin(angle),
+      },
+    };
+  });
+};
