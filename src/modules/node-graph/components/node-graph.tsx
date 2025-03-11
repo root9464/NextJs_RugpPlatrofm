@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import {
   addEdge,
@@ -15,7 +16,7 @@ import {
   type OnConnect,
 } from '@xyflow/react';
 import '@xyflow/react/dist/base.css';
-import ELK from 'elkjs/lib/elk.bundled.js';
+import ELK, { ElkNode } from 'elkjs/lib/elk.bundled.js';
 import { useCallback, useEffect } from 'react';
 import { initialEdges, initialNodes } from '../constants/consts';
 import { EdgeComponent } from '../slices/edge';
@@ -38,6 +39,13 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
   markerEnd: 'edge-circle',
 };
 
+interface CustomElkNode extends ElkNode {
+  data?: Record<string, any>;
+  type?: string;
+  measured?: { width: number; height: number };
+  className?: string;
+}
+
 const useLayout = () => {
   const { getNodes, setNodes, getEdges } = useReactFlow();
   const initialized = useNodesInitialized();
@@ -57,10 +65,15 @@ const useLayout = () => {
         'elk.edgeLabels.inline': 'true',
       },
       children: nodes.map((node) => ({
-        ...node,
+        id: node.id,
         width: node.measured?.width || 150,
         height: node.measured?.height || 50,
-      })),
+        // Добавляем кастомные свойства для последующего восстановления
+        data: node.data,
+        type: node.type,
+        className: node.className,
+        measured: node.measured,
+      })) as CustomElkNode[],
       edges: edges.map((edge) => ({
         ...edge,
         layoutOptions: {
