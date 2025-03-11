@@ -13,18 +13,10 @@ import { IndexatorModalLayouts } from '@/components/layouts/modal.layouts';
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
 import { useParams } from 'next/navigation';
+import { Jetton } from '../hooks/useUserBalance';
 import { BalanceModule } from '../module';
 
-type Token = {
-  balance: number;
-  image: string;
-  symbol: string;
-  decimals: number;
-  address: string;
-  price_ton: number;
-};
-
-export const PieChartWidget = ({ tokens }: { tokens: Token[] }) => {
+export const PieChartWidget = ({ tokens }: { tokens: Jetton[] }) => {
   const chartData = tokens.map((token) => ({
     category: token.symbol,
     amount: token.balance,
@@ -55,7 +47,7 @@ export const PieChartWidget = ({ tokens }: { tokens: Token[] }) => {
       <Card.Header className='flex w-full flex-row items-center justify-between pb-0'>
         <div className='flex items-center gap-2'>
           <Image src={SelectTokenIco} alt='Select Token' width={20} height={20} />
-          <h2 className='text-xl font-bold'>$457 324</h2>
+          <h2 className='text-xl font-bold'>$xxxxx</h2>
         </div>
 
         <div className='flex items-center gap-2'>

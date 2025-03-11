@@ -39,7 +39,7 @@ export default async function IndexatorPage({ params }: { params: { address: str
             </div>
 
             <div className='flex h-full w-full flex-col gap-5'>
-              <HistoryBalanceModule />
+              <HistoryBalanceModule address={params.address} />
             </div>
           </div>
 

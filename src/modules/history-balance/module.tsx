@@ -8,6 +8,7 @@ import { IndexatorModalLayouts } from '@/components/layouts/modal.layouts';
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
 
+import { useQueryClient } from '@tanstack/react-query';
 import {
   AreaSeries,
   AreaStyleOptions,
@@ -21,6 +22,7 @@ import {
   SeriesOptionsCommon,
 } from 'lightweight-charts';
 import { useEffect, useRef } from 'react';
+import { useGetBalance } from './hooks/useGetBalance';
 
 const chartAreaStyle: DeepPartial<ChartOptions> = {
   layout: {
@@ -48,27 +50,25 @@ const chartAreaSeriesStyle: DeepPartial<AreaStyleOptions & SeriesOptionsCommon> 
   lineType: LineType.Curved,
 };
 
-const initialData = [
-  { time: '2018-12-22', value: 32.51 },
-  { time: '2018-12-23', value: 31.11 },
-  { time: '2018-12-24', value: 27.02 },
-  { time: '2018-12-25', value: 27.32 },
-  { time: '2018-12-26', value: 25.17 },
-  { time: '2018-12-27', value: 28.89 },
-  { time: '2018-12-28', value: 25.46 },
-  { time: '2018-12-29', value: 23.92 },
-  { time: '2018-12-30', value: 22.68 },
-  { time: '2018-12-31', value: 22.67 },
-];
-
-export const HistoryBalanceModule = () => {
+export const HistoryBalanceModule = ({ address }: { address: string }) => {
   const {
     mount,
     unmount,
     modalState: { isOpen },
   } = useFullscreenModal();
+  const queryClient = useQueryClient();
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
+
+  const { data: addressBalance, isSuccess } = useGetBalance(address);
+  if (isSuccess) {
+    queryClient.setQueryData(['balance-history', address], (oldData: { time: string; value: number }[] | undefined) => {
+      if (!oldData) return [addressBalance];
+
+      if (oldData[oldData.length - 1].value === addressBalance.value) return oldData;
+      return [...oldData, addressBalance];
+    });
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -83,8 +83,8 @@ export const HistoryBalanceModule = () => {
 
     chart.timeScale().fitContent();
     const newSeries = chart.addSeries(AreaSeries, chartAreaSeriesStyle);
-
-    newSeries.setData(initialData);
+    const historyData = queryClient.getQueryData<{ time: string; value: number }[]>(['balance-history', address]) ?? [];
+    newSeries.setData(historyData);
 
     window.addEventListener('resize', handleResize);
 
@@ -93,7 +93,7 @@ export const HistoryBalanceModule = () => {
 
       chart.remove();
     };
-  }, [chartContainerRef]);
+  }, [chartContainerRef, addressBalance, address, queryClient]);
 
   return (
     <div className='flex h-full w-full flex-col gap-2.5'>
@@ -110,7 +110,11 @@ export const HistoryBalanceModule = () => {
               alt='Open Full Size'
               width={20}
               height={20}
-              onClick={isOpen ? unmount : (event) => mount(event, <IndexatorModalLayouts children_module={<HistoryBalanceModule />} />)}
+              onClick={
+                isOpen
+                  ? unmount
+                  : (event) => mount(event, <IndexatorModalLayouts children_module={<HistoryBalanceModule address={address} />} />)
+              }
             />
           </div>
         </Card.Header>
