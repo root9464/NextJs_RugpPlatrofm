@@ -39,7 +39,7 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
 };
 
 const useLayout = () => {
-  const { getNodes, setNodes, getEdges, fitView } = useReactFlow();
+  const { getNodes, setNodes, getEdges } = useReactFlow();
   const initialized = useNodesInitialized();
 
   const runLayout = useCallback(async () => {
@@ -50,8 +50,11 @@ const useLayout = () => {
       id: 'root',
       layoutOptions: {
         'elk.algorithm': 'org.eclipse.elk.force',
-        'elk.spacing.nodeNode': '100',
+        'elk.spacing.nodeNode': '30',
         'elk.force.repulsion': '2000',
+        'elk.edgeRouting': 'ORTHOGONAL',
+        'elk.force.edgeElasticity': '100',
+        'elk.edgeLabels.inline': 'true',
       },
       children: nodes.map((node) => ({
         ...node,
@@ -60,6 +63,10 @@ const useLayout = () => {
       })),
       edges: edges.map((edge) => ({
         ...edge,
+        layoutOptions: {
+          'elk.edge.type': 'straight',
+          'elk.edge.smooth': 'false',
+        },
         sources: [edge.source],
         targets: [edge.target],
       })),
@@ -67,17 +74,26 @@ const useLayout = () => {
 
     try {
       const layoutedGraph = await elk.layout(graph);
-      setNodes(
-        layoutedGraph.children?.map((node) => ({
-          ...node,
-          position: { x: node.x, y: node.y },
-        })) || [],
-      );
-      window.requestAnimationFrame(() => fitView());
+      const layoutedNodes = layoutedGraph.children
+        ?.map((layoutNode) => {
+          const originalNode = nodes.find((n) => n.id === layoutNode.id);
+          return originalNode
+            ? {
+                ...originalNode,
+                position: {
+                  x: layoutNode.x ?? originalNode.position.x,
+                  y: layoutNode.y ?? originalNode.position.y,
+                },
+              }
+            : null;
+        })
+        .filter(Boolean) as Node[];
+
+      setNodes(layoutedNodes);
     } catch (err) {
       console.error('Layout error:', err);
     }
-  }, [getNodes, getEdges, setNodes, fitView]);
+  }, [getNodes, getEdges, setNodes]);
 
   return { runLayout, initialized };
 };
@@ -118,11 +134,8 @@ export const NodeGraph = () => {
 
       setNodes((nds) => [...nds, newNode]);
       setEdges((eds) => [...eds, newEdge]);
-
-      // Запускаем перерасчет layout после добавления нового узла
-      setTimeout(runLayout, 50);
     },
-    [nodes, setNodes, setEdges, runLayout],
+    [nodes, setNodes, setEdges],
   );
 
   return (
