@@ -36,8 +36,15 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
   markerEnd: 'edge-circle',
 };
 
-const getCircularPosition = (center: Node, nodes: Node[], radius: number) => {
-  const angleStep = (2 * Math.PI) / Math.max(nodes.length, 1);
+const getCircularPosition = (center: Node, nodes: Node[]) => {
+  const numberOfChildren = nodes.length;
+  let radius;
+  if (numberOfChildren <= 1) {
+    radius = NODE_SPACING;
+  } else {
+    radius = MIN_DISTANCE / (2 * Math.sin(Math.PI / numberOfChildren));
+  }
+  const angleStep = (2 * Math.PI) / Math.max(numberOfChildren, 1);
   return nodes.map((node, idx) => ({
     ...node,
     position: {
@@ -47,28 +54,39 @@ const getCircularPosition = (center: Node, nodes: Node[], radius: number) => {
   }));
 };
 
-const resolveCollisions = (nodes: Node[], newNode: Node): Node[] => {
+const resolveCollisions = (nodes: Node[]): Node[] => {
   const updatedNodes = [...nodes];
   let hasCollision = true;
   let iterations = 0;
-  const maxIterations = 50;
+  const maxIterations = 100;
 
   while (hasCollision && iterations < maxIterations) {
     hasCollision = false;
     for (let i = 0; i < updatedNodes.length; i++) {
-      if (updatedNodes[i].id === newNode.id) continue;
-
-      const dx = updatedNodes[i].position.x - newNode.position.x;
-      const dy = updatedNodes[i].position.y - newNode.position.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance < MIN_DISTANCE && distance > 0) {
-        hasCollision = true;
-        const pushFactor = ((MIN_DISTANCE - distance) / distance) * 0.5;
-        updatedNodes[i].position.x += dx * pushFactor;
-        updatedNodes[i].position.y += dy * pushFactor;
-        newNode.position.x -= dx * pushFactor;
-        newNode.position.y -= dy * pushFactor;
+      for (let j = i + 1; j < updatedNodes.length; j++) {
+        const nodeA = updatedNodes[i];
+        const nodeB = updatedNodes[j];
+        const dx = nodeA.position.x - nodeB.position.x;
+        const dy = nodeA.position.y - nodeB.position.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < MIN_DISTANCE && distance > 0) {
+          hasCollision = true;
+          const pushFactor = ((MIN_DISTANCE - distance) / distance) * 0.5;
+          const pushX = dx * pushFactor;
+          const pushY = dy * pushFactor;
+          if (nodeA.id === MAIN_NODE_ID) {
+            updatedNodes[j].position.x -= 2 * pushX;
+            updatedNodes[j].position.y -= 2 * pushY;
+          } else if (nodeB.id === MAIN_NODE_ID) {
+            updatedNodes[i].position.x += 2 * pushX;
+            updatedNodes[i].position.y += 2 * pushY;
+          } else {
+            updatedNodes[i].position.x += pushX;
+            updatedNodes[i].position.y += pushY;
+            updatedNodes[j].position.x -= pushX;
+            updatedNodes[j].position.y -= pushY;
+          }
+        }
       }
     }
     iterations++;
@@ -107,16 +125,19 @@ export const NodeGraph = () => {
 
       const childEdges = edges.filter((e) => e.source === clickedNode.id);
       const childNodes = nodes.filter((n) => childEdges.some((e) => e.target === n.id)).concat(newNode);
-      const arrangedNodes = getCircularPosition(clickedNode, childNodes, NODE_SPACING);
-      const updatedNodes = nodes
-        .map((node) => {
-          const arrangedNode = arrangedNodes.find((n) => n.id === node.id);
-          return arrangedNode || node;
-        })
-        .filter((n) => n.id !== newNode.id);
-      const finalNodes = resolveCollisions(updatedNodes, arrangedNodes[arrangedNodes.length - 1]);
+      const arrangedNodes = getCircularPosition(clickedNode, childNodes);
 
-      setNodes([...finalNodes, arrangedNodes[arrangedNodes.length - 1]]);
+      const updatedNodes = nodes.map((node) => {
+        const arrangedNode = arrangedNodes.find((n) => n.id === node.id);
+        return arrangedNode ? { ...node, position: arrangedNode.position } : node;
+      });
+
+      const newArrangedNode = arrangedNodes.find((n) => n.id === newNode.id);
+      const allNodes = [...updatedNodes, newArrangedNode!];
+
+      const finalNodes = resolveCollisions(allNodes);
+
+      setNodes(finalNodes);
       setEdges((eds) => [...eds, newEdge]);
     },
     [nodes, edges, mainNode, setNodes, setEdges],
