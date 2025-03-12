@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { z, ZodError } from 'zod';
 
 const validateResult = <T, U>(data: U, resType: z.ZodType<T>) => {
@@ -19,4 +20,11 @@ const generateColor = () => {
 
 const copyClipboard = async (text: string) => await navigator.clipboard.writeText(text);
 
-export { copyClipboard, generateColor, validateResult };
+const formatUnixTime = (utime: number) => {
+  const d = new Date(utime * 1000);
+  const [_, day, month] = d.toUTCString().split(' ');
+  const time = d.toTimeString().substring(0, 8);
+  return `${day} ${month}, ${time}`;
+};
+
+export { copyClipboard, formatUnixTime, generateColor, validateResult };

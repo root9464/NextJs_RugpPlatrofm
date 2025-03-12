@@ -28,7 +28,6 @@ type BalanceTabsProps = {
 export const BalanceTabs = ({ address, TokenTable, NftsGrid }: BalanceTabsProps) => {
   const { data: nfts } = useUserNft(address);
   const { data: user_balance } = useUserBalance(address);
-  console.log(user_balance);
 
   return (
     <div className='h-full w-full'>
