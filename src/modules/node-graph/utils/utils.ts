@@ -1,5 +1,11 @@
 import { Edge, InternalNode, Node, Position } from '@xyflow/react';
 
+type Options = {
+  nodeSpacing: number;
+  maxNodePerOrbit: number;
+  orbitSpacing: number;
+};
+
 const getNodeIntersection = (intersectionNode: InternalNode<Node>, targetNode: InternalNode<Node>) => {
   const { width: intersectionNodeWidth = 0, height: intersectionNodeHeight = 0 } = intersectionNode.measured;
   const intersectionNodePosition = intersectionNode.internals.positionAbsolute;
@@ -66,7 +72,7 @@ export const getEdgeParams = (source: InternalNode<Node>, target: InternalNode<N
 
 export const resolveCollisions = (nodes: Node[], minDistance: number, mainNodeId: string) => {
   const nodeMap = new Map<string, Node>(nodes.map((n) => [n.id, { ...n }]));
-  const REPULSE_FORCE = 0.15;
+  const REPULSE_FORCE = 0.05;
   const MAX_ITERATIONS = 150;
 
   for (let iter = 0; iter < MAX_ITERATIONS; iter++) {
@@ -108,9 +114,7 @@ export const getCircularPosition = (
   nodes: Node[],
   edges: Edge[],
   allNodes: Node[],
-  nodeSpacing: number,
-  maxNodePerOrbit: number,
-  orbitSpacing: number,
+  { nodeSpacing, maxNodePerOrbit, orbitSpacing }: Options,
 ) => {
   const parentEdge = edges.find((e) => e.target === center.id);
   const parentNode = parentEdge ? allNodes.find((n) => n.id === parentEdge.source) : null;
@@ -141,4 +145,17 @@ export const getCircularPosition = (
       },
     };
   });
+};
+
+export const arrangeTree = (mainNode: Node, allNodes: Node[], allEdges: Edge[], { nodeSpacing, maxNodePerOrbit, orbitSpacing }: Options) => {
+  const arrangedNodes: Node[] = [mainNode];
+  const arrangeSubtree = (node: Node) => {
+    const childEdges = allEdges.filter((e) => e.source === node.id);
+    const childNodes = allNodes.filter((n) => childEdges.some((e) => e.target === n.id));
+    const arrangedChildren = getCircularPosition(node, childNodes, allEdges, allNodes, { nodeSpacing, maxNodePerOrbit, orbitSpacing });
+    arrangedNodes.push(...arrangedChildren);
+    arrangedChildren.forEach((child) => arrangeSubtree(child));
+  };
+  arrangeSubtree(mainNode);
+  return arrangedNodes;
 };

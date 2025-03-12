@@ -18,7 +18,7 @@ import { initialEdges, initialNodes } from '../constants/consts';
 import { EdgeComponent } from '../slices/edge';
 import { NodeComponent } from '../slices/node';
 import '../style/style.css';
-import { getCircularPosition, resolveCollisions } from '../utils/utils';
+import { arrangeTree, resolveCollisions } from '../utils/utils';
 
 const NODE_SPACING = 300;
 const MIN_DISTANCE = 200;
@@ -42,15 +42,13 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
 export const NodeGraph = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
   const mainNode = useMemo(() => nodes.find((n) => n.id === MAIN_NODE_ID), [nodes]);
 
   const onConnect: OnConnect = useCallback((params) => setEdges((els) => addEdge({ ...params, type: 'custom' }, els)), [setEdges]);
 
-  const onNodeClick = useCallback<NodeMouseHandler>(
-    (_, clickedNode) => {
+  const addNodeToParent = useCallback(
+    (parentNode: Node) => {
       if (!mainNode) return;
-
       const newNodeId = `${Date.now()}`;
       const newNode: Node = {
         id: newNodeId,
@@ -58,30 +56,33 @@ export const NodeGraph = () => {
         data: { title: 'New Node', subline: 'Child' },
         type: 'custom',
       };
-
       const newEdge = {
-        id: `e${clickedNode.id}-${newNodeId}`,
-        source: clickedNode.id,
+        id: `e${parentNode.id}-${newNodeId}`,
+        source: parentNode.id,
         target: newNodeId,
         type: 'custom',
       };
-
-      const childEdges = edges.filter((e) => e.source === clickedNode.id);
-      const childNodes = nodes.filter((n) => childEdges.some((e) => e.target === n.id)).concat(newNode);
-      const arrangedNodes = getCircularPosition(clickedNode, childNodes, edges, nodes, NODE_SPACING, MAX_NODES_PER_ORBIT, ORBIT_SPACING);
-
-      const updatedNodes = nodes.map((node) => arrangedNodes.find((n) => n.id === node.id) || node);
-
-      const finalNodes = resolveCollisions(
-        [...updatedNodes, ...arrangedNodes.filter((n) => !updatedNodes.some((un) => un.id === n.id))],
-        MIN_DISTANCE,
-        mainNode.id,
-      );
-
-      setNodes(finalNodes);
+      setNodes((nds) => {
+        const updatedNodes = [...nds, newNode];
+        const updatedEdges = [...edges, newEdge];
+        const arrangedNodes = arrangeTree(mainNode, updatedNodes, updatedEdges, {
+          nodeSpacing: NODE_SPACING,
+          maxNodePerOrbit: MAX_NODES_PER_ORBIT,
+          orbitSpacing: ORBIT_SPACING,
+        });
+        const finalNodes = resolveCollisions(arrangedNodes, MIN_DISTANCE, mainNode.id);
+        return finalNodes;
+      });
       setEdges((eds) => [...eds, newEdge]);
     },
-    [nodes, edges, mainNode, setNodes, setEdges],
+    [edges, mainNode, setNodes, setEdges],
+  );
+
+  const onNodeClick = useCallback<NodeMouseHandler>(
+    (_, clickedNode) => {
+      addNodeToParent(clickedNode);
+    },
+    [addNodeToParent],
   );
 
   return (
