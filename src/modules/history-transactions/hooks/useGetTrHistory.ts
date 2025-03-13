@@ -92,4 +92,4 @@ const getTransactionsHistory = async (address: string) => {
   return data.events;
 };
 
-export { getTransactionsHistory, type Action, type Event };
+export { getTransactionsHistory, type Action, type Event, type ResponseGetTrHistory };

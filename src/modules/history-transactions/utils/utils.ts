@@ -78,4 +78,4 @@ const getAmount = (actions: Action[]): { amount: string; symbol: string } => {
   return { amount: '0', symbol: 'unknown' };
 };
 
-export { getAmount, getFirstComment, getTransactionDirection };
+export { getAmount, getFirstComment, getTransactionDirection, handleAction };

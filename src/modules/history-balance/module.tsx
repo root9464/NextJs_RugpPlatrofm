@@ -60,15 +60,8 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
-  const { data: addressBalance, isSuccess } = useGetBalance(address);
-  if (isSuccess) {
-    queryClient.setQueryData(['balance-history', address], (oldData: { time: string; value: number }[] | undefined) => {
-      if (!oldData) return [addressBalance];
-
-      if (oldData[oldData.length - 1].value === addressBalance.value) return oldData;
-      return [...oldData, addressBalance];
-    });
-  }
+  const { data: addressBalance } = useGetBalance(address);
+  console.log(addressBalance);
 
   useEffect(() => {
     const handleResize = () => {
@@ -83,8 +76,8 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
 
     chart.timeScale().fitContent();
     const newSeries = chart.addSeries(AreaSeries, chartAreaSeriesStyle);
-    const historyData = queryClient.getQueryData<{ time: string; value: number }[]>(['balance-history', address]) ?? [];
-    newSeries.setData(historyData);
+
+    newSeries.setData(addressBalance ?? []);
 
     window.addEventListener('resize', handleResize);
 
