@@ -1,7 +1,12 @@
 import { Table } from '@components/ui/table';
-import { UserBalance } from '../helpers/serialize-balance';
 
-export const TokenTable = ({ tokens }: { tokens: UserBalance[] }) => {
+type TokenTableProps = {
+  symbol: string;
+  balance: number;
+  priceUsd: number;
+};
+
+export const TokenTable = ({ data }: { data: TokenTableProps[] }) => {
   return (
     <div className='h-full max-h-48 overflow-y-scroll rounded-lg'>
       <Table aria-label='Table' selectionMode='none' className='bg-uiSecondaryBg border-0 border-none text-white'>
@@ -12,12 +17,12 @@ export const TokenTable = ({ tokens }: { tokens: UserBalance[] }) => {
           <Table.Column>Price Ton</Table.Column>
         </Table.Header>
         <Table.Body>
-          {tokens.map((token, index) => (
+          {data.map((token, index) => (
             <Table.Row key={index}>
               <Table.Cell>{index}</Table.Cell>
-              <Table.Cell>{token.metadata.symbol}</Table.Cell>
-              <Table.Cell>{token.wallet_info.balance}</Table.Cell>
-              <Table.Cell>0$</Table.Cell>
+              <Table.Cell>{token.symbol}</Table.Cell>
+              <Table.Cell>{token.balance}</Table.Cell>
+              <Table.Cell>{token.priceUsd}$</Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>

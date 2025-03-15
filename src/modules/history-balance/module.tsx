@@ -9,6 +9,7 @@ import { IndexatorModalLayouts } from '@/components/layouts/modal.layouts';
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
 
+import { getMoscowISODate } from '@/shared/utils/utils';
 import { lazy } from 'react';
 import { usePrice } from './hooks/useGetBalance';
 
@@ -22,6 +23,10 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
   } = useFullscreenModal();
 
   const { data: prices, isSuccess, isLoading } = usePrice(address ?? '');
+  const chartData = {
+    time: getMoscowISODate(),
+    value: prices?.balanceInUsd ?? 0,
+  };
 
   return (
     <div className='flex h-max w-full flex-col gap-2.5'>
@@ -47,7 +52,7 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
           </div>
         </Card.Header>
         <Card.Content className='z-0 border-none px-0'>
-          {isSuccess && prices && <BalanceChart data={[prices]} />}
+          {isSuccess && prices && <BalanceChart data={[chartData]} />}
           {isLoading && <p>Loading...</p>}
         </Card.Content>
       </Card>

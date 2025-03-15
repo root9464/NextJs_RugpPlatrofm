@@ -5,9 +5,11 @@ import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
 import { Tabs } from '@components/ui/tabs';
 import Image from 'next/image';
+import { usePrice } from '../history-balance/hooks/useGetBalance';
 import { useUserBalance } from './hooks/useUserBalance';
 import { useUserNft } from './hooks/useUserNft';
 import { TokenTable } from './slices/token-table';
+import { mapBalancesToTable } from './utils/utils';
 import { PieChartWidget } from './widgets/pie-chart';
 
 const ITEMS = [
@@ -24,6 +26,9 @@ const ITEMS = [
 export const BalanceModule = ({ address }: { address: string }) => {
   const { data: user_balance } = useUserBalance(address);
   const { data: user_nfts, isSuccess, isLoading } = useUserNft(address);
+  const { data: prices } = usePrice(address ?? '');
+
+  const tokenTableData = mapBalancesToTable(user_balance ?? [], prices?.jettonsPrices ?? []);
 
   return (
     <div className='h-fit w-full'>
@@ -34,9 +39,9 @@ export const BalanceModule = ({ address }: { address: string }) => {
 
         <Tabs.Panel className='min-h-[486px] text-white' id='assets'>
           <div className='flex flex-col gap-3'>
-            <PieChartWidget tokens={user_balance ?? []} />
+            <PieChartWidget tokens={user_balance ?? []} balanceInUsd={prices?.balanceInUsd ?? 0} />
 
-            <TokenTable tokens={user_balance ?? []} />
+            <TokenTable data={tokenTableData} />
           </div>
         </Tabs.Panel>
 

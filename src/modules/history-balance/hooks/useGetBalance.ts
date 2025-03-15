@@ -1,6 +1,5 @@
 import { fetchUserBalance } from '@/modules/balance/hooks/useUserBalance';
 import { coffeApiInstance } from '@/shared/lib/axios';
-import { getMoscowISODate } from '@shared/utils/utils';
 import { useQuery } from '@tanstack/react-query';
 import { Address } from '@ton/core';
 import { calculateBalanceInUSD } from '../utils/utils';
@@ -40,10 +39,7 @@ const usePrice = (address: string) =>
 
       const balanceInUsd = calculateBalanceInUSD(userBalance, jettonsPrices);
 
-      return {
-        time: getMoscowISODate(),
-        value: balanceInUsd,
-      };
+      return { balanceInUsd, jettonsPrices };
     },
     enabled: !!address,
     refetchInterval: 1000 * 60,

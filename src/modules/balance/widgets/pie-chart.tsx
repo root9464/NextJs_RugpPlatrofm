@@ -14,7 +14,7 @@ import { useParams } from 'next/navigation';
 import { UserBalance } from '../helpers/serialize-balance';
 import { BalanceModule } from '../module';
 
-export const PieChartWidget = ({ tokens }: { tokens: UserBalance[] }) => {
+export const PieChartWidget = ({ tokens, balanceInUsd }: { tokens: UserBalance[]; balanceInUsd: number }) => {
   const chartData = tokens.map((token) => ({
     category: token.metadata.symbol,
     amount: token.wallet_info.balance,
@@ -45,7 +45,7 @@ export const PieChartWidget = ({ tokens }: { tokens: UserBalance[] }) => {
       <Card.Header className='flex w-full flex-row items-center justify-between pb-0'>
         <div className='flex items-center gap-2'>
           <Image src={SelectTokenIco} alt='Select Token' width={20} height={20} />
-          <h2 className='text-xl font-bold'>$xxxxx</h2>
+          <h2 className='text-xl font-bold'>${balanceInUsd}</h2>
         </div>
 
         <div className='flex items-center gap-2'>
