@@ -1,5 +1,3 @@
-'use client';
-
 import SelectTokenIco from '@assets/svg/select-token.svg';
 import { Card } from '@components/ui/card';
 import { Chart, ChartConfig, ChartTooltip, ChartTooltipContent } from '@components/ui/chart';
@@ -13,20 +11,20 @@ import { IndexatorModalLayouts } from '@/components/layouts/modal.layouts';
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
 import { useParams } from 'next/navigation';
-import { Jetton } from '../hooks/useUserBalance';
+import { UserBalance } from '../helpers/serialize-balance';
 import { BalanceModule } from '../module';
 
-export const PieChartWidget = ({ tokens }: { tokens: Jetton[] }) => {
+export const PieChartWidget = ({ tokens }: { tokens: UserBalance[] }) => {
   const chartData = tokens.map((token) => ({
-    category: token.symbol,
-    amount: token.balance,
+    category: token.metadata.symbol,
+    amount: token.wallet_info.balance,
     fill: generateColor(),
   }));
 
   const chartConfig = tokens.reduce<ChartConfig>(
     (config, token) => {
-      config[token.symbol.toLowerCase()] = {
-        label: token.symbol,
+      config[token.metadata.symbol.toLowerCase()] = {
+        label: token.metadata.symbol,
         color: generateColor(),
       };
       return config;

@@ -8,7 +8,6 @@ import { IndexatorModalLayouts } from '@/components/layouts/modal.layouts';
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
 
-import { useQueryClient } from '@tanstack/react-query';
 import {
   AreaSeries,
   AreaStyleOptions,
@@ -19,10 +18,9 @@ import {
   DeepPartial,
   LineStyle,
   LineType,
-  SeriesOptionsCommon,
+  type SeriesOptionsCommon,
 } from 'lightweight-charts';
 import { useEffect, useRef } from 'react';
-import { useGetBalance } from './hooks/useGetBalance';
 
 const chartAreaStyle: DeepPartial<ChartOptions> = {
   layout: {
@@ -56,12 +54,7 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
     unmount,
     modalState: { isOpen },
   } = useFullscreenModal();
-  const queryClient = useQueryClient();
-
   const chartContainerRef = useRef<HTMLDivElement>(null);
-
-  const { data: addressBalance } = useGetBalance(address);
-  console.log(addressBalance);
 
   useEffect(() => {
     const handleResize = () => {
@@ -77,7 +70,7 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
     chart.timeScale().fitContent();
     const newSeries = chart.addSeries(AreaSeries, chartAreaSeriesStyle);
 
-    newSeries.setData(addressBalance ?? []);
+    newSeries.setData([]); //*!
 
     window.addEventListener('resize', handleResize);
 
@@ -86,7 +79,7 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
 
       chart.remove();
     };
-  }, [chartContainerRef, addressBalance, address, queryClient]);
+  }, [chartContainerRef, address]);
 
   return (
     <div className='flex h-max w-full flex-col gap-2.5'>

@@ -1,136 +1,96 @@
-import { tonApiInstance } from '@shared/lib/axios';
-import { validateResult } from '@shared/utils/utils';
+import { tonCenterInstance } from '@shared/lib/axios';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
-import { z } from 'zod';
+import { serializeUserBalance, UserBalance } from '../helpers/serialize-balance';
 
-const ExtraBalanceSchema = z.object({
-  amount: z.string(),
-  preview: z.object({
-    id: z.number(),
-    symbol: z.string(),
-    decimals: z.number(),
-    image: z.string().url(),
-  }),
-});
-
-const AccountSchema = z.object({
-  address: z.string(),
-  balance: z.number(),
-  extra_balance: z.array(ExtraBalanceSchema).optional().default([]),
-  currencies_balance: z.record(z.unknown()).optional().default({}),
-  last_activity: z.number(),
-  status: z.string(),
-  interfaces: z.array(z.string()),
-  name: z.string().optional(),
-  is_scam: z.boolean().optional().default(false),
-  icon: z.string().url().optional(),
-  memo_required: z.boolean().optional().default(false),
-  get_methods: z.array(z.string()).optional().default([]),
-  is_suspended: z.boolean().optional().default(false),
-  is_wallet: z.boolean(),
-});
-
-const PriceSchema = z.object({
-  prices: z.object({
-    TON: z.number(),
-    USD: z.number(),
-  }),
-  diff_24h: z.object({
-    TON: z.string(),
-    USD: z.string(),
-  }),
-  diff_7d: z.object({
-    TON: z.string(),
-    USD: z.string(),
-  }),
-  diff_30d: z.object({
-    TON: z.string(),
-    USD: z.string(),
-  }),
-});
-
-const WalletAddressSchema = z.object({
-  address: z.string(),
-  is_scam: z.boolean(),
-  is_wallet: z.boolean(),
-});
-
-const JettonSchema = z.object({
-  address: z.string(),
-  name: z.string(),
-  symbol: z.string(),
-  decimals: z.number(),
-  image: z.string().url(),
-  verification: z.string(),
-  score: z.number(),
-});
-
-const JettonBalanceSchema = z.object({
-  balance: z.string(),
-  price: PriceSchema,
-  wallet_address: WalletAddressSchema,
-  jetton: JettonSchema,
-});
-
-const JettonsSchema = z.object({
-  balances: z.array(JettonBalanceSchema),
-});
-
-type AccountType = z.infer<typeof AccountSchema>;
-type JettonBalanceType = z.infer<typeof JettonBalanceSchema>;
-export type Jetton = {
-  balance: number;
-  image: string;
-  symbol: string;
-  decimals: number;
+type JettonWallet = {
   address: string;
-  price_ton: number;
+  balance: string;
+  owner: string;
+  jetton: string;
+  last_transaction_lt: string;
+  code_hash: string;
+  data_hash: string;
 };
 
-export async function fetchUserBalance(address: string): Promise<Jetton[]> {
-  try {
-    const [accountResponse, jettonsResponse]: [AxiosResponse<AccountType> | null, AxiosResponse<JettonBalanceType> | null] = await Promise.all([
-      tonApiInstance.get(`/accounts/${address}`),
-      tonApiInstance.get(`/accounts/${address}/jettons?currencies=ton,usd`),
-    ]).catch((error: AxiosError) => {
-      throw new Error(`API fetch failed: ${error.message}`);
-    });
-    const account = validateResult(accountResponse.data, AccountSchema);
-    if (!account) throw new Error('Failed to fetch account data.');
+type AddressBookEntry = {
+  user_friendly: string;
+  domain: string | null;
+};
 
-    const jettons = validateResult(jettonsResponse.data, JettonsSchema);
+type ItemInfo = {
+  type: string;
+  name: string;
+  symbol: string;
+  description: string;
+  image?: string;
+  extra: Record<string, string>;
+};
 
-    const tonBalance = {
-      balance: account.balance / 10 ** 9,
-      image: 'native',
+type MetadataEntry = {
+  is_indexed: boolean;
+  token_info: ItemInfo[];
+};
+
+type JettonBalance = {
+  jetton_wallets: JettonWallet[];
+  address_book: Record<string, AddressBookEntry>;
+  metadata: Record<string, MetadataEntry>;
+};
+
+type TonBalance = {
+  ok: boolean;
+  result: string;
+};
+
+const fetchUserBalance = async (address: string): Promise<UserBalance[]> => {
+  const [jettonsResponse, accountResponse]: [AxiosResponse<JettonBalance> | null, AxiosResponse<TonBalance> | null] = await Promise.all([
+    tonCenterInstance.get(`/v3/jetton/wallets`, {
+      params: {
+        owner_address: address,
+        exclude_zero_balance: true,
+        offset: 0,
+      },
+    }),
+    tonCenterInstance.get(`/v2/getAddressBalance`, {
+      params: {
+        address: address,
+      },
+    }),
+  ]).catch((error: AxiosError) => {
+    throw new Error(`API fetch failed: ${error.message}`);
+  });
+  if (!accountResponse || !jettonsResponse) throw new Error('Failed to fetch account data.');
+
+  const jettonBalances = serializeUserBalance(jettonsResponse.data);
+
+  const tonBalance: UserBalance = {
+    wallet_info: {
+      address: address,
+      user_friendly: accountResponse.data.result,
+      balance: Number(accountResponse.data.result) / 10 ** 9,
+      owner: { raw: address, friendly: accountResponse.data.result },
+      last_transaction_lt: 0,
+    },
+
+    metadata: {
+      contract_address: 'native',
+      name: 'TON',
       symbol: 'TON',
+      description: 'TON',
       decimals: 9,
-      address: account.address,
-      price_ton: account.balance / 10 ** 9,
-    };
+    },
+  };
 
-    const jettonBalances = jettons.balances.map((jetton) => ({
-      balance: Number(jetton.balance) / 10 ** jetton.jetton.decimals,
-      image: jetton.jetton.image,
-      symbol: jetton.jetton.symbol,
-      decimals: jetton.jetton.decimals,
-      address: jetton.jetton.address,
-      price_ton: jetton.price.prices.TON,
-    }));
+  return [tonBalance, ...jettonBalances];
+};
 
-    return [tonBalance, ...jettonBalances];
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`API fetch failed: ${error.message}`);
-    }
-    throw error;
-  }
-}
-
-export const useUserBalance = (address: string) =>
+const useUserBalance = (address: string) =>
   useQuery({
-    queryKey: ['balance', address],
-    queryFn: async () => await fetchUserBalance(address),
+    queryKey: ['user-balance', address],
+    queryFn: () => fetchUserBalance(address),
     enabled: !!address,
   });
+
+export { fetchUserBalance, useUserBalance };
+export type { ItemInfo, JettonBalance, TonBalance };

@@ -1,57 +1,79 @@
-import { tonApiInstance } from '@/shared/lib/axios';
-import { validateResult } from '@/shared/utils/utils';
+import { tonCenterInstance } from '@/shared/lib/axios';
 import { useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
+import { serializeNft } from '../helpers/serialize-nfts';
 
-const OwnerSchema = z.object({
-  address: z.string(),
-  is_scam: z.boolean(),
-  is_wallet: z.boolean(),
-});
+type Content = {
+  description: string;
+  image: string;
+  name: string;
+};
 
-const CollectionSchema = z.object({
-  address: z.string(),
-  name: z.string(),
-  description: z.string(),
-});
+type Collection = {
+  address: string;
+  owner_address: string;
+  last_transaction_lt: string;
+  next_item_index: string;
+  collection_content: Content;
+  data_hash: string;
+  code_hash: string;
+};
 
-const MetadataSchema = z.object({
-  name: z.string(),
-  image: z.string().url(),
-  description: z.string(),
-});
+type NftItem = {
+  address: string;
+  init: boolean;
+  index: string;
+  collection_address: string;
+  owner_address: string;
+  content: Content;
+  last_transaction_lt: string;
+  code_hash: string;
+  data_hash: string;
+  collection: Collection;
+};
 
-const PreviewSchema = z.object({
-  resolution: z.string(),
-  url: z.string().url(),
-});
+type AddressBookEntry = {
+  user_friendly: string;
+  domain: string | null;
+};
 
-const NFTItemSchema = z.object({
-  address: z.string(),
-  index: z.number(),
-  owner: OwnerSchema,
-  collection: CollectionSchema,
-  verified: z.boolean(),
-  metadata: MetadataSchema,
-  previews: z.array(PreviewSchema),
-  approved_by: z.array(z.unknown()).optional(),
-  trust: z.string(),
-});
+type TokenInfo = {
+  type: string;
+  name: string;
+  description: string;
+  image: string;
+  extra: Record<string, string>;
+};
 
-const NFTSchema = z.object({
-  nft_items: z.array(NFTItemSchema),
-});
+type MetadataEntry = {
+  is_indexed: boolean;
+  token_info: TokenInfo[];
+};
 
-export type NftItemsType = z.infer<typeof NFTItemSchema>;
+type NftsBalance = {
+  nft_items: NftItem[];
+  address_book: Record<string, AddressBookEntry>;
+  metadata: Record<string, MetadataEntry>;
+};
 
-export const useUserNft = (address: string) =>
+const fetchUserNfts = async (address: string) => {
+  const { data, status, statusText } = await tonCenterInstance.get<NftsBalance>(`v3/nft/items?`, {
+    params: {
+      owner_address: address,
+      offset: 0,
+    },
+  });
+
+  if (status !== 200) throw new Error(statusText);
+
+  return serializeNft(data);
+};
+
+const useUserNft = (address: string) =>
   useQuery({
     queryKey: ['user-nft', address],
-    queryFn: async () => {
-      const { data, status, statusText } = await tonApiInstance.get(`/accounts/${address}/nfts`);
-      if (status != 200) throw new Error(`${status}: ${statusText}`);
-      return validateResult(data, NFTSchema);
-    },
-    select: (data) => data.nft_items,
+    queryFn: () => fetchUserNfts(address),
     enabled: !!address,
   });
+
+export { fetchUserNfts, useUserNft };
+export type { NftItem, NftsBalance };

@@ -10,6 +10,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
   experimental: {
     optimizePackageImports: ['recharts, rxjs'],
+    gzipSize: true,
   },
 
   swcMinify: true,

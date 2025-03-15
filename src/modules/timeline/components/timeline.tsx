@@ -100,7 +100,7 @@ export const Timeline = ({ widthSize, markers, markerToPercentage, formatMarker,
   const rightPercentage = useTransform(rightX, percentageTransform);
 
   return (
-    <div className='flex w-full flex-col'>
+    <div className='flex w-fit flex-col'>
       <motion.div
         ref={containerRef}
         className='bg-uiPrimaryBg border-uiMutedPrimary relative h-16 overflow-hidden rounded-lg border'

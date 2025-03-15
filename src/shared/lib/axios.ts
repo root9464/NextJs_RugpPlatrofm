@@ -5,5 +5,8 @@ export const tonApiInstance = axios.create({
 });
 
 export const tonCenterInstance = axios.create({
-  baseURL: 'https://toncenter.com/api/v2',
+  baseURL: 'https://toncenter.com/api/',
+  headers: {
+    'X-API-Key': process.env.NEXT_PUBLIC_TON_CENTER_KEY,
+  },
 });

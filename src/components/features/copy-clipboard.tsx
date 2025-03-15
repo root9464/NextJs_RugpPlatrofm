@@ -3,9 +3,10 @@ import { copyClipboard } from '@/shared/utils/utils';
 import CopyIco from '@assets/svg/copy.svg';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import { cn } from './../../shared/utils/classes';
 
-export const CopyClipboard = ({ data }: { data: string }) => (
-  <div className='flex cursor-pointer flex-row items-center gap-1 text-white'>
+export const CopyClipboard = ({ data, className }: { data: string; className?: string }) => (
+  <div className={cn('flex cursor-pointer flex-row items-center gap-1 text-white', className)}>
     <p>{data}</p>
     <Image
       src={CopyIco}

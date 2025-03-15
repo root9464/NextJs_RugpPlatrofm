@@ -1,0 +1,37 @@
+[
+  {
+    "nft_info": {
+      "address": "0:B2C8D73D62771C3E3843E9F40C33EB86FD5F3A55E77112CDCB6F4614EE5B4DE6",
+      "user_friendly": "EQCyyNc9YnccPjhD6fQMM-uG_V86VedxEs3Lb0YU7ltN5h23",
+      "index": "5",
+      "collection_address": "0:2EC7D3618129046C1980733A5D37EBA3FAA2FA9736780C81C4DFE218503DF643",
+      "owner_address": "UQA_rGxGSOngCzBbPlQ69GH9Co0qYGeNWVixVi87cDgWj9CY",
+      "last_transaction_lt": "52373994000001"
+    },
+    "metadata": {
+      "name": "Lei #5",
+      "description": "Loteria de Anul Nou SHOR TEAM 2025. https://t.me/tonshorovich",
+      "image": {
+        "original": "https://cyan-implicit-stoat-176.mypinata.cloud/ipfs/bafybeibcvxaetvy2co5o6znixksmeie323l4eicu6gttartbzsjxhxzshm",
+        "sizes": {
+          "big": "https://imgproxy.toncenter.com/Qz3FCqLmOYFQEgB4u-FUImTH1tf3zMlw3o0vnUvX_H8/pr:big/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht",
+          "medium": "https://imgproxy.toncenter.com/DQQJ9rSQMMvdTD2v9XLe2AkrY957GL_Wbj2BHnvzBQE/pr:medium/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht",
+          "small": "https://imgproxy.toncenter.com/3LA8qRWx-Xk4kZTh0VyTSLu7M2px3Z1HAvRp_g3BmQ8/pr:small/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWliY3Z4YWV0dnkyY281bzZ6bml4a3NtZWllMzIzbDRlaWN1Nmd0dGFydGJ6c2p4aHh6c2ht"
+        }
+      },
+      "collection": {
+        "address": "0:2EC7D3618129046C1980733A5D37EBA3FAA2FA9736780C81C4DFE218503DF643",
+        "name": "TEST",
+        "description": "Loteria de Anul Nou SHOR TEAM 2025. https://t.me/tonshorovich",
+        "image": {
+          "original": "https://cyan-implicit-stoat-176.mypinata.cloud/ipfs/bafybeihsi52zp5znhwkwxqc3lf6k422boeikp3m2a6lq4mcopbd4bgop6i",
+          "sizes": {
+            "big": "https://imgproxy.toncenter.com/kYS6tyV5NP55JWpS88Ap1ZzVqIBKfZrOCTAsHy-r3E8/pr:big/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWloc2k1MnpwNXpuaHdrd3hxYzNsZjZrNDIyYm9laWtwM20yYTZscTRtY29wYmQ0YmdvcDZp",
+            "medium": "https://imgproxy.toncenter.com/Xu-LUIInZDzWYH2qpqRFX-qQPRCcmVnIrX-qUzcPkq8/pr:medium/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWloc2k1MnpwNXpuaHdrd3hxYzNsZjZrNDIyYm9laWtwM20yYTZscTRtY29wYmQ0YmdvcDZp",
+            "small": "https://imgproxy.toncenter.com/EHEHf7UM8qaETfLNZ2_vcESz6DYcAH75g6-fkXitaeY/pr:small/aHR0cHM6Ly9jeWFuLWltcGxpY2l0LXN0b2F0LTE3Ni5teXBpbmF0YS5jbG91ZC9pcGZzL2JhZnliZWloc2k1MnpwNXpuaHdrd3hxYzNsZjZrNDIyYm9laWtwM20yYTZscTRtY29wYmQ0YmdvcDZp"
+          }
+        }
+      }
+    }
+  }
+]

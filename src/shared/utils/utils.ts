@@ -27,4 +27,14 @@ const formatUnixTime = (utime: number) => {
   return `${day} ${month}, ${time}`;
 };
 
-export { copyClipboard, formatUnixTime, generateColor, validateResult };
+const shortedAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
+
+const formatNumber = (num: number) => {
+  if (num.toString().includes('.') && num.toString().split('.')[1].length > 0) {
+    return Math.trunc(num);
+  }
+
+  return num;
+};
+
+export { copyClipboard, formatNumber, formatUnixTime, generateColor, shortedAddress, validateResult };
