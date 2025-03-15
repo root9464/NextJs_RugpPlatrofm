@@ -1,7 +1,9 @@
-import { UserBalance } from '@/modules/balance/helpers/serialize-balance';
+import { fetchUserBalance } from '@/modules/balance/hooks/useUserBalance';
 import { coffeApiInstance } from '@/shared/lib/axios';
+import { getMoscowISODate } from '@shared/utils/utils';
 import { useQuery } from '@tanstack/react-query';
 import { Address } from '@ton/core';
+import { calculateBalanceInUSD } from '../utils/utils';
 
 type PriceResponse = {
   id: number;
@@ -23,17 +25,27 @@ type PriceResponse = {
   labels: string[];
 };
 
-const usePrice = (jettons: UserBalance[]) =>
+const usePrice = (address: string) =>
   useQuery({
-    queryKey: ['price-jettons', jettons],
+    queryKey: ['price-jettons', address],
     queryFn: async () => {
-      const jettonsAddresses = jettons.flatMap((balance) => Address.parse(balance.metadata.contract_address).toString());
-      const { data, status, statusText } = await coffeApiInstance.post<PriceResponse[]>('/tokens/by-addresses', jettonsAddresses);
+      const userBalance = await fetchUserBalance(address);
+
+      if (!userBalance) throw new Error('Failed to fetch account data.');
+
+      const jettonsAddresses = userBalance.flatMap((balance) => Address.parse(balance.metadata.contract_address).toString());
+
+      const { data: jettonsPrices, status, statusText } = await coffeApiInstance.post<PriceResponse[]>('/tokens/by-addresses', jettonsAddresses);
       if (status !== 200) throw new Error(statusText);
 
-      return data;
+      const balanceInUsd = calculateBalanceInUSD(userBalance, jettonsPrices);
+
+      return {
+        time: getMoscowISODate(),
+        value: balanceInUsd,
+      };
     },
-    enabled: !!jettons,
+    enabled: !!address,
     refetchInterval: 1000 * 60,
   });
 
