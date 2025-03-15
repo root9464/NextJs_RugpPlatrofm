@@ -74,7 +74,7 @@ const fetchUserBalance = async (address: string): Promise<UserBalance[]> => {
     },
 
     metadata: {
-      contract_address: 'native',
+      contract_address: 'UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ',
       name: 'TON',
       symbol: 'TON',
       description: 'TON',

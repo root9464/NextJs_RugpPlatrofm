@@ -37,4 +37,15 @@ const formatNumber = (num: number) => {
   return num;
 };
 
-export { copyClipboard, formatNumber, formatUnixTime, generateColor, shortedAddress, validateResult };
+const getMoscowISODate = () => {
+  const dt = new Date();
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Moscow',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  return formatter.format(dt);
+};
+
+export { copyClipboard, formatNumber, formatUnixTime, generateColor, getMoscowISODate, shortedAddress, validateResult };

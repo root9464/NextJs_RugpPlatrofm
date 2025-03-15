@@ -38,7 +38,7 @@ const chartAreaSeriesStyle: DeepPartial<AreaStyleOptions & SeriesOptionsCommon> 
   lineType: LineType.Curved,
 };
 
-export const BalanceChart = () => {
+export const BalanceChart = ({ data }: { data: { time: string; value: number }[] }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export const BalanceChart = () => {
     chart.timeScale().fitContent();
     const newSeries = chart.addSeries(AreaSeries, chartAreaSeriesStyle);
 
-    newSeries.setData([]); //*!
+    newSeries.setData(data ?? []); //*!
 
     window.addEventListener('resize', handleResize);
 

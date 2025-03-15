@@ -10,3 +10,7 @@ export const tonCenterInstance = axios.create({
     'X-API-Key': process.env.NEXT_PUBLIC_TON_CENTER_KEY,
   },
 });
+
+export const coffeApiInstance = axios.create({
+  baseURL: 'https://tokens.swap.coffee/api/v2',
+});

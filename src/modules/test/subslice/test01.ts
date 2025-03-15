@@ -1,8 +1,12 @@
-// import { serializeNft } from '@/modules/balance/helpers/serialize-nfts';
-// import { fetchUserNfts } from '@/modules/balance/hooks/useUserNft';
+function getMoscowISODate(): string {
+  const dt = new Date();
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Moscow',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  return formatter.format(dt);
+}
 
-// const address = 'UQA_rGxGSOngCzBbPlQ69GH9Co0qYGeNWVixVi87cDgWj9CY';
-
-// const dt = await fetchUserNfts(address);
-
-// console.log(serializeNft(dt), '');
+console.log(getMoscowISODate());

@@ -9,7 +9,12 @@ import { IndexatorModalLayouts } from '@/components/layouts/modal.layouts';
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
 
+import { getMoscowISODate } from '@shared/utils/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { lazy } from 'react';
+import { UserBalance } from '../balance/helpers/serialize-balance';
+import { usePrice } from './hooks/useGetBalance';
+import { calculateBalanceInUSD } from './utils/utils';
 
 const BalanceChart = lazy(() => import('./components/chart').then((module) => ({ default: module.BalanceChart })));
 
@@ -19,6 +24,16 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
     unmount,
     modalState: { isOpen },
   } = useFullscreenModal();
+  const queryClient = useQueryClient();
+
+  const cacheUserBalance: UserBalance[] | undefined = queryClient.getQueryData(['user-balance', address]);
+  const { data: prices, isSuccess, isLoading } = usePrice(cacheUserBalance ?? []);
+  const balanceInUsd = calculateBalanceInUSD(cacheUserBalance ?? [], prices ?? []);
+
+  const newChartData = {
+    time: getMoscowISODate(),
+    value: balanceInUsd,
+  };
 
   return (
     <div className='flex h-max w-full flex-col gap-2.5'>
@@ -44,7 +59,8 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
           </div>
         </Card.Header>
         <Card.Content className='z-0 border-none px-0'>
-          <BalanceChart />
+          {isSuccess && prices && <BalanceChart data={[newChartData]} />}
+          {isLoading && <p>Loading...</p>}
         </Card.Content>
       </Card>
     </div>

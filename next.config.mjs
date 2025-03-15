@@ -11,10 +11,8 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['recharts, rxjs'],
     gzipSize: true,
-    turbo: true,
-
   },
-  
+
   swcMinify: true,
   reactStrictMode: true,
   webpack: (config) => {

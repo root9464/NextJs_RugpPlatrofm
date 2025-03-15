@@ -1,0 +1,140 @@
+[
+  {
+    "wallet_info": {
+      "address": "UQA_rGxGSOngCzBbPlQ69GH9Co0qYGeNWVixVi87cDgWj9CY",
+      "user_friendly": "74690630",
+      "balance": 0.07469063,
+      "owner": {
+        "raw": "UQA_rGxGSOngCzBbPlQ69GH9Co0qYGeNWVixVi87cDgWj9CY",
+        "friendly": "74690630"
+      },
+      "last_transaction_lt": 0
+    },
+    "metadata": {
+      "contract_address": "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ",
+      "name": "TON",
+      "symbol": "TON",
+      "description": "TON",
+      "decimals": 9
+    }
+  },
+  {
+    "wallet_info": {
+      "address": "0:910DE93113C6809CD5B80CAD2C1B69B129E616B6C1F258CC2EC57E2E2490D7D2",
+      "user_friendly": "EQCRDekxE8aAnNW4DK0sG2mxKeYWtsHyWMwuxX4uJJDX0mAD",
+      "balance": 500,
+      "owner": {
+        "raw": "0:3FAC6C4648E9E00B305B3E543AF461FD0A8D2A60678D5958B1562F3B7038168F",
+        "friendly": "UQA_rGxGSOngCzBbPlQ69GH9Co0qYGeNWVixVi87cDgWj9CY"
+      },
+      "last_transaction_lt": 51957375000001
+    },
+    "metadata": {
+      "contract_address": "0:FA5B4ADA0756860ABF3AA5677BFA85A9037416D955C227DB269587028642217E",
+      "name": "CAVIAR COIN",
+      "symbol": "CAVI",
+      "description": "Utility token of the NFT TON Frogs project  ",
+      "decimals": 9,
+      "icon": {
+        "original": "https://raw.githubusercontent.com/ShadowTi/new-token_ikon/main/Artboard.png",
+        "sizes": {
+          "big": "https://imgproxy.toncenter.com/ej9U15jEK1EOoFtXCQFy4htgZnO89GK-jHPLPtNrNDc/pr:big/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1NoYWRvd1RpL25ldy10b2tlbl9pa29uL21haW4vQXJ0Ym9hcmQucG5n",
+          "medium": "https://imgproxy.toncenter.com/9n5L_2FC-fbkXC6W6HigxgV2fRaJ_mLwyEnNvQQUcEo/pr:medium/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1NoYWRvd1RpL25ldy10b2tlbl9pa29uL21haW4vQXJ0Ym9hcmQucG5n",
+          "small": "https://imgproxy.toncenter.com/Zm4o6ufS_5Zbzbh_T6UuYNqZ_1lqw6ecgUwJGJHbpwc/pr:small/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1NoYWRvd1RpL25ldy10b2tlbl9pa29uL21haW4vQXJ0Ym9hcmQucG5n"
+        }
+      }
+    }
+  },
+  {
+    "wallet_info": {
+      "address": "0:D865B1803A6430D2B9BACED7551BA2133E2604F5443100D117A160A5987A5C5C",
+      "user_friendly": "EQDYZbGAOmQw0rm6ztdVG6ITPiYE9UQxANEXoWClmHpcXPgH",
+      "balance": 17910,
+      "owner": {
+        "raw": "0:3FAC6C4648E9E00B305B3E543AF461FD0A8D2A60678D5958B1562F3B7038168F",
+        "friendly": "UQA_rGxGSOngCzBbPlQ69GH9Co0qYGeNWVixVi87cDgWj9CY"
+      },
+      "last_transaction_lt": 52775125000001
+    },
+    "metadata": {
+      "contract_address": "0:5893D469F238059B113A5C820E88F252C4E6C0C2DE837538517533FBB7725085",
+      "name": "Rebalancer",
+      "symbol": "REBA",
+      "description": "Get Rebalancer to your portfolio",
+      "decimals": 9,
+      "icon": {
+        "original": "https://i.postimg.cc/cHKRb09G/rebalancer.png",
+        "sizes": {
+          "big": "https://imgproxy.toncenter.com/x2gg-cnQHnDllX6iPbtJxjRHK5LbArLaFzGYJ62RGCA/pr:big/aHR0cHM6Ly9pLnBvc3RpbWcuY2MvY0hLUmIwOUcvcmViYWxhbmNlci5wbmc",
+          "medium": "https://imgproxy.toncenter.com/o0dLlKxyf9t9NvVXgFXNO_fZMjNaGHwTKRfflFIwUi8/pr:medium/aHR0cHM6Ly9pLnBvc3RpbWcuY2MvY0hLUmIwOUcvcmViYWxhbmNlci5wbmc",
+          "small": "https://imgproxy.toncenter.com/_LW0YeqwOVNsfQMMwpq5iyqF5qJIkfnB5eMD7-dMKR0/pr:small/aHR0cHM6Ly9pLnBvc3RpbWcuY2MvY0hLUmIwOUcvcmViYWxhbmNlci5wbmc"
+        }
+      }
+    }
+  },
+  {
+    "wallet_info": {
+      "address": "0:678165BF22DAFC4C4F50A1C339A89E65EF5BC1AFBB5A2941424BAE6DAF55AF21",
+      "user_friendly": "EQBngWW_Itr8TE9QocM5qJ5l71vBr7taKUFCS65tr1WvIYat",
+      "balance": 12,
+      "owner": {
+        "raw": "0:3FAC6C4648E9E00B305B3E543AF461FD0A8D2A60678D5958B1562F3B7038168F",
+        "friendly": "UQA_rGxGSOngCzBbPlQ69GH9Co0qYGeNWVixVi87cDgWj9CY"
+      },
+      "last_transaction_lt": 52945918000001
+    },
+    "metadata": {
+      "contract_address": "0:C27F454DC0D15A97D6C2449CE1489A3CD2743B926B28E22A5BC374D3BA2BE229",
+      "name": "name",
+      "symbol": "sym",
+      "description": "desc",
+      "decimals": 9
+    }
+  },
+  {
+    "wallet_info": {
+      "address": "0:3DD902E34FA63D382CFCFE1A0EC6DCD6D866202584728FF823E59DEFF09938DC",
+      "user_friendly": "EQA92QLjT6Y9OCz8_hoOxtzW2GYgJYRyj_gj5Z3v8Jk43N07",
+      "balance": 12,
+      "owner": {
+        "raw": "0:3FAC6C4648E9E00B305B3E543AF461FD0A8D2A60678D5958B1562F3B7038168F",
+        "friendly": "UQA_rGxGSOngCzBbPlQ69GH9Co0qYGeNWVixVi87cDgWj9CY"
+      },
+      "last_transaction_lt": 52946726000001
+    },
+    "metadata": {
+      "contract_address": "0:62549A8C3E0DF44FB88F57BA7940434BFC87CDE4B774A3D3BFD03A6801168302",
+      "name": "12",
+      "symbol": "12",
+      "description": "12",
+      "decimals": 9
+    }
+  },
+  {
+    "wallet_info": {
+      "address": "0:465801813AE31B003C7726DBF2E9326EFE092F9A54B52165773D2623D19EF405",
+      "user_friendly": "EQBGWAGBOuMbADx3Jtvy6TJu_gkvmlS1IWV3PSYj0Z70BYjh",
+      "balance": 99999947,
+      "owner": {
+        "raw": "0:3FAC6C4648E9E00B305B3E543AF461FD0A8D2A60678D5958B1562F3B7038168F",
+        "friendly": "UQA_rGxGSOngCzBbPlQ69GH9Co0qYGeNWVixVi87cDgWj9CY"
+      },
+      "last_transaction_lt": 53831340000003
+    },
+    "metadata": {
+      "contract_address": "0:63DCF883F026ED9164BE8615BF611ED793FB61E78D88276B7C3896B435761C1A",
+      "name": "MemCoin",
+      "symbol": "MC",
+      "description": "Netu",
+      "decimals": 9,
+      "icon": {
+        "original": "https://avatars.mds.yandex.net/i?id=d249e4ef5760dfe5765ccec36b33e319_l-4357983-images-thumbs&n=13",
+        "sizes": {
+          "big": "https://imgproxy.toncenter.com/2Jtq5DFV9turME8YVoVvnIpJo_3LM_8ZlDhkYbJlQRQ/pr:big/aHR0cHM6Ly9hdmF0YXJzLm1kcy55YW5kZXgubmV0L2k_aWQ9ZDI0OWU0ZWY1NzYwZGZlNTc2NWNjZWMzNmIzM2UzMTlfbC00MzU3OTgzLWltYWdlcy10aHVtYnMmbj0xMw",
+          "medium": "https://imgproxy.toncenter.com/1WzrAkH4xXYhDz8UseVzt6p2L2XgXEBJDae5rvFSqbE/pr:medium/aHR0cHM6Ly9hdmF0YXJzLm1kcy55YW5kZXgubmV0L2k_aWQ9ZDI0OWU0ZWY1NzYwZGZlNTc2NWNjZWMzNmIzM2UzMTlfbC00MzU3OTgzLWltYWdlcy10aHVtYnMmbj0xMw",
+          "small": "https://imgproxy.toncenter.com/xyIhCGQoOn5X3PbO9opkddpIcOeHUNv8XaieJ-ZaVUE/pr:small/aHR0cHM6Ly9hdmF0YXJzLm1kcy55YW5kZXgubmV0L2k_aWQ9ZDI0OWU0ZWY1NzYwZGZlNTc2NWNjZWMzNmIzM2UzMTlfbC00MzU3OTgzLWltYWdlcy10aHVtYnMmbj0xMw"
+        }
+      }
+    }
+  }
+]
