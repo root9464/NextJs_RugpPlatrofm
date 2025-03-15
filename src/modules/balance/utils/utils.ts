@@ -9,7 +9,7 @@ const mapBalancesToTable = (balances: UserBalance[], prices: PriceResponse[]) =>
     .map((balance) => ({
       symbol: balance.metadata.symbol,
       balance: balance.wallet_info.balance,
-      priceUsd: priceMap.get(balance.metadata.symbol)!,
+      priceUsd: priceMap.get(balance.metadata.symbol)! * balance.wallet_info.balance,
     }));
 };
 
