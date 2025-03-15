@@ -5,48 +5,13 @@ import Image from 'next/image';
 
 import { useFullscreenModal } from '@/components/fullscreen-modal';
 import { IndexatorModalLayouts } from '@/components/layouts/modal.layouts';
+
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
 
-import {
-  AreaSeries,
-  AreaStyleOptions,
-  ChartOptions,
-  ColorType,
-  createChart,
-  CrosshairMode,
-  DeepPartial,
-  LineStyle,
-  LineType,
-  type SeriesOptionsCommon,
-} from 'lightweight-charts';
-import { useEffect, useRef } from 'react';
+import { lazy } from 'react';
 
-const chartAreaStyle: DeepPartial<ChartOptions> = {
-  layout: {
-    background: { type: ColorType.Solid, color: '#090c14' },
-    textColor: '#414a60',
-    attributionLogo: false,
-  },
-  grid: {
-    vertLines: { color: 'transparent' },
-    horzLines: { color: '#121B2E' },
-  },
-  crosshair: {
-    horzLine: { color: 'white', style: LineStyle.Dashed },
-    vertLine: { color: 'white', style: LineStyle.Dashed },
-    mode: CrosshairMode.Magnet,
-  },
-};
-
-const chartAreaSeriesStyle: DeepPartial<AreaStyleOptions & SeriesOptionsCommon> = {
-  lineColor: 'rgba(21,93,252,0.95)',
-  topColor: 'rgba(21,93,252,0.95)',
-  bottomColor: 'rgba(21, 93, 252, 0.05)',
-  priceLineColor: 'rgba(21,93,252,0.5)',
-  priceLineStyle: LineStyle.Dotted,
-  lineType: LineType.Curved,
-};
+const BalanceChart = lazy(() => import('./components/chart').then((module) => ({ default: module.BalanceChart })));
 
 export const HistoryBalanceModule = ({ address }: { address: string }) => {
   const {
@@ -54,32 +19,6 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
     unmount,
     modalState: { isOpen },
   } = useFullscreenModal();
-  const chartContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      chart.applyOptions({ width: chartContainerRef.current?.clientWidth });
-    };
-
-    const chart = createChart(chartContainerRef.current as HTMLDivElement, {
-      ...chartAreaStyle,
-      width: chartContainerRef.current?.clientWidth,
-      height: 300,
-    });
-
-    chart.timeScale().fitContent();
-    const newSeries = chart.addSeries(AreaSeries, chartAreaSeriesStyle);
-
-    newSeries.setData([]); //*!
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-
-      chart.remove();
-    };
-  }, [chartContainerRef, address]);
 
   return (
     <div className='flex h-max w-full flex-col gap-2.5'>
@@ -105,7 +44,7 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
           </div>
         </Card.Header>
         <Card.Content className='z-0 border-none px-0'>
-          <div ref={chartContainerRef} className='h-full w-full' />
+          <BalanceChart />
         </Card.Content>
       </Card>
     </div>
