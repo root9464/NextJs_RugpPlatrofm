@@ -4,11 +4,7 @@ import Image from 'next/image';
 import OpenFullSizeIco from '@assets/svg/fullsize.svg';
 import ScreenShotIco from '@assets/svg/screenshot.svg';
 import { ReactFlowProvider } from '@xyflow/react';
-import dynamic from 'next/dynamic';
-
-const NodeGraph = dynamic(() => import('./components/node-graph').then((mod) => mod.NodeGraph), {
-  ssr: false,
-});
+import { NodeGraph } from './components/node-graph';
 
 export const NodeGraphModule = () => {
   return (

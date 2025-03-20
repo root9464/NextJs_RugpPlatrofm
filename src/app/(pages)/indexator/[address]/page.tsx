@@ -3,13 +3,13 @@ import { fetchUserBalance } from '@/modules/balance/hooks/useUserBalance';
 import { BalanceModule } from '@/modules/balance/module';
 import { fetchPriceJettons } from '@/modules/history-balance/hooks/useGetBalance';
 import { HistoryTransactionsModule } from '@/modules/history-transactions/module';
-import { NodeGraphModule } from '@/modules/node-graph/module';
 import { TimeLineModule } from '@/modules/timeline/module';
 import { ProfileModule } from '@modules/profile/module';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 
 const HistoryBalanceModule = dynamic(() => import('@modules/history-balance/module').then((mod) => mod.HistoryBalanceModule), { ssr: false });
+const NodeGraphModule = dynamic(() => import('@modules/node-graph/module').then((mod) => mod.NodeGraphModule), { ssr: false });
 
 export default async function IndexatorPage({ params }: { params: { address: string } }) {
   const queryClient = new QueryClient();

@@ -2,15 +2,15 @@
 import {
   addEdge,
   Controls,
-  DefaultEdgeOptions,
-  Edge,
-  EdgeTypes,
-  Node,
   NodeMouseHandler,
-  NodeTypes,
   ReactFlow,
   useEdgesState,
   useNodesState,
+  type DefaultEdgeOptions,
+  type Edge,
+  type EdgeTypes,
+  type Node,
+  type NodeTypes,
   type OnConnect,
 } from '@xyflow/react';
 import '@xyflow/react/dist/base.css';
@@ -23,7 +23,7 @@ import '../style/style.css';
 
 const MAIN_NODE_ID = '1';
 
-export type TurboSimulationNode = {
+export type CustomNodeType = {
   x: number;
   y: number;
   vx?: number;
@@ -46,21 +46,21 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
 };
 
 export const NodeGraph = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<TurboSimulationNode>(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<CustomNodeType>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
-  const mainNode = useMemo(() => nodes.find((n) => n.id === MAIN_NODE_ID), [nodes]);
-
   const { onNodeDragStart, onNodeDrag, onNodeDragStop, updateSimulation } = useForceLayout();
+
+  const mainNode = useMemo(() => nodes.find((n) => n.id === MAIN_NODE_ID), [nodes]);
 
   const onConnect: OnConnect = useCallback((params) => setEdges((els) => addEdge({ ...params, type: 'custom' }, els)), [setEdges]);
 
   const addNodeToParent = useCallback(
-    (parentNode: TurboSimulationNode) => {
+    (parentNode: CustomNodeType) => {
       if (!mainNode) return;
       const newNodeId = `${Date.now()}`;
       const parentCenterX = parentNode.position.x + (parentNode.measured?.width || 100) / 2;
       const parentCenterY = parentNode.position.y + (parentNode.measured?.height || 100) / 2;
-      const newNode: TurboSimulationNode = {
+      const newNode: CustomNodeType = {
         id: newNodeId,
         position: { x: parentCenterX - 50, y: parentCenterY - 50 + 100 },
         x: parentCenterX,
@@ -84,7 +84,7 @@ export const NodeGraph = () => {
 
   const onNodeClick = useCallback<NodeMouseHandler>(
     (_, clickedNode) => {
-      addNodeToParent(clickedNode as TurboSimulationNode);
+      addNodeToParent(clickedNode as CustomNodeType);
     },
     [addNodeToParent],
   );

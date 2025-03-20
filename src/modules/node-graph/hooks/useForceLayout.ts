@@ -1,7 +1,7 @@
 import { Edge, useNodesInitialized, useReactFlow, XYPosition } from '@xyflow/react';
 import { forceCollide, ForceLink, forceLink, forceManyBody, forceSimulation, Simulation } from 'd3-force';
 import { useEffect, useRef } from 'react';
-import { TurboSimulationNode } from '../components/node-graph';
+import { CustomNodeType } from '../components/node-graph';
 
 const SIMULATION_CONFIG = {
   chargeStrength: -15,
@@ -16,18 +16,18 @@ const SIMULATION_CONFIG = {
   velocityDecay: 0.4,
 };
 
-const configureSimulation = (nodes: TurboSimulationNode[], edges: Edge[], onTick: () => void): Simulation<TurboSimulationNode, Edge> => {
-  const collisionRadius = (node: TurboSimulationNode) => {
+const configureSimulation = (nodes: CustomNodeType[], edges: Edge[], onTick: () => void): Simulation<CustomNodeType, Edge> => {
+  const collisionRadius = (node: CustomNodeType) => {
     const { width = SIMULATION_CONFIG.defaultSize, height = SIMULATION_CONFIG.defaultSize } = node.measured || {};
     return Math.max(width, height) / 2 + SIMULATION_CONFIG.collidePadding;
   };
 
-  return forceSimulation<TurboSimulationNode>(nodes)
+  return forceSimulation<CustomNodeType>(nodes)
     .force('charge', forceManyBody().strength(SIMULATION_CONFIG.chargeStrength))
-    .force('collide', forceCollide<TurboSimulationNode>().radius(collisionRadius).iterations(SIMULATION_CONFIG.collideIterations))
+    .force('collide', forceCollide<CustomNodeType>().radius(collisionRadius).iterations(SIMULATION_CONFIG.collideIterations))
     .force(
       'link',
-      forceLink<TurboSimulationNode, Edge>(edges)
+      forceLink<CustomNodeType, Edge>(edges)
         .id((d) => d.id)
         .strength(SIMULATION_CONFIG.linkStrength)
         .distance(SIMULATION_CONFIG.linkDistance),
@@ -38,27 +38,27 @@ const configureSimulation = (nodes: TurboSimulationNode[], edges: Edge[], onTick
     .on('tick', onTick);
 };
 
-const adjustNodeCoordinates = (nodes: TurboSimulationNode[]): TurboSimulationNode[] =>
+const adjustNodeCoordinates = (nodes: CustomNodeType[]): CustomNodeType[] =>
   nodes.map((node) => ({
     ...node,
     x: node.x ?? node.position.x + (node.measured?.width || SIMULATION_CONFIG.defaultSize) / 2,
     y: node.y ?? node.position.y + (node.measured?.height || SIMULATION_CONFIG.defaultSize) / 2,
   }));
 
-const lockMainNodePosition = (nodes: TurboSimulationNode[]): TurboSimulationNode[] => {
+const lockMainNodePosition = (nodes: CustomNodeType[]): CustomNodeType[] => {
   const mainNode = nodes.find((n) => n.id === SIMULATION_CONFIG.mainNodeId);
   if (mainNode) [mainNode.fx, mainNode.fy] = [mainNode.x, mainNode.y];
   return nodes;
 };
 
-const stabilizeExistingNodes = (newNodes: TurboSimulationNode[], existingNodes: TurboSimulationNode[] = []) => {
+const stabilizeExistingNodes = (newNodes: CustomNodeType[], existingNodes: CustomNodeType[] = []) => {
   return newNodes.map((node) => {
     const existing = existingNodes.find((n) => n.id === node.id);
     return existing ? { ...node, x: existing.x, y: existing.y } : node;
   });
 };
 
-const syncNodePositions = (currentNodes: TurboSimulationNode[], simulationNodes: TurboSimulationNode[]) =>
+const syncNodePositions = (currentNodes: CustomNodeType[], simulationNodes: CustomNodeType[]) =>
   currentNodes.map((node) => {
     const simNode = simulationNodes.find((n) => n.id === node.id);
     if (!simNode) return node;
@@ -73,9 +73,9 @@ const syncNodePositions = (currentNodes: TurboSimulationNode[], simulationNodes:
   });
 
 export const useForceLayout = () => {
-  const { getNodes, setNodes, getEdges } = useReactFlow<TurboSimulationNode>();
+  const { getNodes, setNodes, getEdges } = useReactFlow<CustomNodeType>();
   const initialized = useNodesInitialized();
-  const simulation = useRef<Simulation<TurboSimulationNode, Edge>>();
+  const simulation = useRef<Simulation<CustomNodeType, Edge>>();
   const draggedNodeId = useRef<string>();
 
   useEffect(() => {
@@ -98,7 +98,7 @@ export const useForceLayout = () => {
     };
   }, [initialized, getNodes, getEdges, setNodes]);
 
-  const updateNodePosition = (position: XYPosition, node: TurboSimulationNode) => {
+  const updateNodePosition = (position: XYPosition, node: CustomNodeType) => {
     const simNode = simulation.current?.nodes().find((n) => n.id === node.id);
     if (!simNode) return;
 
@@ -128,12 +128,12 @@ export const useForceLayout = () => {
     const nodes = lockMainNodePosition(stabilizedNodes);
     const edges = getEdges();
     simulation.current.nodes(nodes);
-    (simulation.current.force('link') as ForceLink<TurboSimulationNode, Edge>).links(edges);
+    (simulation.current.force('link') as ForceLink<CustomNodeType, Edge>).links(edges);
     simulation.current.alpha(1).restart();
   };
 
   return {
-    onNodeDragStart: (_: unknown, node: TurboSimulationNode) => {
+    onNodeDragStart: (_: unknown, node: CustomNodeType) => {
       draggedNodeId.current = node.id;
       updateNodePosition(node.position, node);
     },

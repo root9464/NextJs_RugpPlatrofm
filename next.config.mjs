@@ -15,6 +15,7 @@ const nextConfig = {
 
   swcMinify: true,
   reactStrictMode: true,
+
   webpack: (config) => {
     config.optimization.splitChunks = {
       chunks: 'all',
@@ -26,12 +27,18 @@ const nextConfig = {
           priority: -10,
         },
         default: {
-          minChunks: 2,
+          minChunks: 3,
           priority: -20,
           reuseExistingChunk: true,
         },
       },
     };
+
+    config.experiments = {
+      ...config.experiments,
+      topLevelAwait: true,
+    };
+      
     return config;
   },
 };

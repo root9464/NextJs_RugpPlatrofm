@@ -1,12 +1,12 @@
 import { Edge } from '@xyflow/react';
-import { TurboSimulationNode } from '../components/node-graph';
+import { CustomNodeType } from '../components/node-graph';
 
-export function initialElements(): { nodes: TurboSimulationNode[]; edges: Edge[] } {
-  const nodes: TurboSimulationNode[] = [];
+export function initialElements(): { nodes: CustomNodeType[]; edges: Edge[] } {
+  const nodes: CustomNodeType[] = [];
   const edges: Edge[] = [];
 
   const center = { x: 0, y: 0 };
-  const mainNode: TurboSimulationNode = {
+  const mainNode: CustomNodeType = {
     id: '1',
     position: center,
     x: center.x,
@@ -24,7 +24,7 @@ export function initialElements(): { nodes: TurboSimulationNode[]; edges: Edge[]
     const y = radius * Math.sin(radians) + center.y;
 
     const nodeId = `${i + 2}`;
-    const node: TurboSimulationNode = {
+    const node: CustomNodeType = {
       id: nodeId,
       position: { x, y },
       x,
