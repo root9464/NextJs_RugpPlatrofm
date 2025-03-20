@@ -1,16 +1,19 @@
-import { Edge, Node } from '@xyflow/react';
-
-export function initialElements(): { nodes: Node[]; edges: Edge[] } {
-  const nodes: Node[] = [];
+import { Edge } from '@xyflow/react';
+import { TurboSimulationNode } from '../components/node-graph';
+export function initialElements(): { nodes: TurboSimulationNode[]; edges: Edge[] } {
+  const nodes: TurboSimulationNode[] = [];
   const edges: Edge[] = [];
 
   const center = { x: 0, y: 0 };
-  nodes.push({
+  const mainNode: TurboSimulationNode = {
     id: '1',
     position: center,
+    x: center.x,
+    y: center.y,
     data: { title: 'Wallet', subline: 'то откуда' },
     type: 'custom',
-  });
+  };
+  nodes.push(mainNode);
 
   for (let i = 0; i < 8; i++) {
     const degrees = i * (360 / 8);
@@ -20,12 +23,15 @@ export function initialElements(): { nodes: Node[]; edges: Edge[] } {
     const y = radius * Math.sin(radians) + center.y;
 
     const nodeId = `${i + 2}`;
-    nodes.push({
+    const node: TurboSimulationNode = {
       id: nodeId,
       position: { x, y },
+      x,
+      y,
       data: { title: `Node ${i + 1}`, subline: `Subline ${i + 1}` },
       type: 'custom',
-    });
+    };
+    nodes.push(node);
 
     edges.push({
       id: `e1-${nodeId}`,
