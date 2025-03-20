@@ -1,5 +1,6 @@
 import { Edge } from '@xyflow/react';
 import { TurboSimulationNode } from '../components/node-graph';
+
 export function initialElements(): { nodes: TurboSimulationNode[]; edges: Edge[] } {
   const nodes: TurboSimulationNode[] = [];
   const edges: Edge[] = [];
