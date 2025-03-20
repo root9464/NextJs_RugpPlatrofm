@@ -2,6 +2,7 @@
 import {
   addEdge,
   Controls,
+  MarkerType,
   NodeMouseHandler,
   ReactFlow,
   useEdgesState,
@@ -57,22 +58,35 @@ export const NodeGraph = () => {
   const addNodeToParent = useCallback(
     (parentNode: CustomNodeType) => {
       if (!mainNode) return;
+
       const newNodeId = `${Date.now()}`;
       const parentCenterX = parentNode.position.x + (parentNode.measured?.width || 100) / 2;
       const parentCenterY = parentNode.position.y + (parentNode.measured?.height || 100) / 2;
+
+      const isIncoming = Math.random() < 0.5;
+      const [sourceNodeId, targetNodeId] = isIncoming ? [newNodeId, parentNode.id] : [parentNode.id, newNodeId];
+
       const newNode: CustomNodeType = {
         id: newNodeId,
         position: { x: parentCenterX - 50, y: parentCenterY - 50 + 100 },
         x: parentCenterX,
         y: parentCenterY + 100,
-        data: { title: 'New Node', subline: 'Child' },
+        data: {
+          title: 'New Node',
+          subline: isIncoming ? 'Incoming' : 'Outgoing',
+        },
         type: 'custom',
       };
+
       const newEdge: Edge = {
-        id: `e${parentNode.id}-${newNodeId}`,
-        source: parentNode.id,
-        target: newNodeId,
+        id: `e${sourceNodeId}-${targetNodeId}-${Date.now()}`,
+        source: sourceNodeId,
+        target: targetNodeId,
         type: 'custom',
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: isIncoming ? '#FF0000' : '#00FF00',
+        },
       };
 
       setNodes((nds) => [...nds, newNode]);
