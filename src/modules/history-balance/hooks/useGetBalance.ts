@@ -24,26 +24,28 @@ type PriceResponse = {
   labels: string[];
 };
 
+const fetchPriceJettons = async (address: string) => {
+  const userBalance = await fetchUserBalance(address);
+
+  if (!userBalance) throw new Error('Failed to fetch account data.');
+
+  const jettonsAddresses = userBalance.flatMap((balance) => Address.parse(balance.metadata.contract_address).toString());
+
+  const { data: jettonsPrices, status, statusText } = await coffeApiInstance.post<PriceResponse[]>('/tokens/by-addresses', jettonsAddresses);
+  if (status !== 200) throw new Error(statusText);
+
+  const balanceInUsd = calculateBalanceInUSD(userBalance, jettonsPrices);
+
+  return { balanceInUsd, jettonsPrices };
+};
+
 const usePrice = (address: string) =>
   useQuery({
     queryKey: ['price-jettons', address],
-    queryFn: async () => {
-      const userBalance = await fetchUserBalance(address);
-
-      if (!userBalance) throw new Error('Failed to fetch account data.');
-
-      const jettonsAddresses = userBalance.flatMap((balance) => Address.parse(balance.metadata.contract_address).toString());
-
-      const { data: jettonsPrices, status, statusText } = await coffeApiInstance.post<PriceResponse[]>('/tokens/by-addresses', jettonsAddresses);
-      if (status !== 200) throw new Error(statusText);
-
-      const balanceInUsd = calculateBalanceInUSD(userBalance, jettonsPrices);
-
-      return { balanceInUsd, jettonsPrices };
-    },
+    queryFn: async () => await fetchPriceJettons(address),
     enabled: !!address,
     refetchInterval: 1000 * 60,
   });
 
-export { usePrice };
+export { fetchPriceJettons, usePrice };
 export type { PriceResponse };

@@ -1,12 +1,5 @@
-function getMoscowISODate(): string {
-  const dt = new Date();
-  const formatter = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Europe/Moscow',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-  return formatter.format(dt);
-}
+const firstDate = new Date(1742323055 * 1000); // Умножаем на 1000, чтобы перевести в миллисекунды
+console.log(firstDate.toLocaleString()); // Пример вывода: "18.03.2025, 12:04:42"
 
-console.log(getMoscowISODate());
+const secondDate = new Date(1740794066 * 1000); // Умножаем на 1000, чтобы перевести в миллисекунды
+console.log(secondDate.toLocaleString()); // Пример вывода: "18.03.2025, 12:04:42"

@@ -1,5 +1,8 @@
 'use client';
 import { useWindow } from '@/shared/hooks/useWindow';
+import { useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import { PriceResponse } from '../history-balance/hooks/useGetBalance';
 import { Timeline } from './components/timeline';
 import { histogramData } from './constants/const';
 
@@ -19,8 +22,15 @@ function getWidthSize(minWidth: number) {
 
 export const TimeLineModule = () => {
   const { width } = useWindow();
-
   const widthSize = getWidthSize(width);
+  const { address } = useParams();
+
+  const queryClient = useQueryClient();
+
+  const cachePriceJettons: { balanceInUsd: number; jettonsPrices: PriceResponse[] } | undefined = queryClient.getQueryData([
+    'price-jettons',
+    address ?? '',
+  ]);
 
   return <Timeline widthSize={widthSize} markers={histogramData} offset={16} />;
 };

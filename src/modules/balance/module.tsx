@@ -6,11 +6,11 @@ import ScreenShotIco from '@assets/svg/screenshot.svg';
 import { Tabs } from '@components/ui/tabs';
 import Image from 'next/image';
 import { usePrice } from '../history-balance/hooks/useGetBalance';
+import { PieChartWidget } from './components/pie-chart';
 import { useUserBalance } from './hooks/useUserBalance';
 import { useUserNft } from './hooks/useUserNft';
 import { TokenTable } from './slices/token-table';
 import { mapBalancesToTable } from './utils/utils';
-import { PieChartWidget } from './widgets/pie-chart';
 
 const ITEMS = [
   {
@@ -24,9 +24,9 @@ const ITEMS = [
 ];
 
 export const BalanceModule = ({ address }: { address: string }) => {
+  const { data: user_nfts, isSuccess: isSuccessNfts, isLoading: isLoadingNfts, isError: isErrorNfts, error: errorNfts } = useUserNft(address);
   const { data: user_balance } = useUserBalance(address);
-  const { data: user_nfts, isSuccess, isLoading } = useUserNft(address);
-  const { data: prices } = usePrice(address ?? '');
+  const { data: prices } = usePrice(address ?? ''); // тут где то баг
 
   const tokenTableData = mapBalancesToTable(user_balance ?? [], prices?.jettonsPrices ?? []);
 
@@ -52,12 +52,14 @@ export const BalanceModule = ({ address }: { address: string }) => {
               <Image src={OpenFullSizeIco} alt='Open Full Size' width={20} height={20} />
             </div>
             <div className='grid w-full flex-1 grid-cols-[1fr_1fr] gap-3'>
-              {isSuccess &&
-                user_nfts.map((nft) => (
+              {isSuccessNfts &&
+                user_nfts?.map((nft) => (
                   <img src={nft.metadata.image.sizes.medium} alt={nft.metadata.name} key={nft.metadata.name} className='w-full' />
                 ))}
 
-              {isLoading && <div>Loading...</div>}
+              {isLoadingNfts && <div>Loading...</div>}
+
+              {isErrorNfts && <div>{errorNfts.message}</div>}
             </div>
           </div>
         </Tabs.Panel>
