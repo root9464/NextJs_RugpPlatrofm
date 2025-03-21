@@ -54,7 +54,16 @@ const lockMainNodePosition = (nodes: CustomNodeType[]): CustomNodeType[] => {
 const stabilizeExistingNodes = (newNodes: CustomNodeType[], existingNodes: CustomNodeType[] = []) => {
   return newNodes.map((node) => {
     const existing = existingNodes.find((n) => n.id === node.id);
-    return existing ? { ...node, x: existing.x, y: existing.y } : node;
+    if (existing) {
+      return {
+        ...node,
+        x: existing.x,
+        y: existing.y,
+        fx: existing.fx !== undefined && existing.fx !== null ? existing.fx : node.fx,
+        fy: existing.fy !== undefined && existing.fy !== null ? existing.fy : node.fy,
+      };
+    }
+    return node;
   });
 };
 
@@ -108,14 +117,6 @@ export const useForceLayout = () => {
   };
 
   const releaseNodePosition = () => {
-    const simNode = simulation.current?.nodes().find((n) => n.id === draggedNodeId.current);
-    if (!simNode) return;
-
-    const shouldLock = simNode.id === SIMULATION_CONFIG.mainNodeId;
-    if (!shouldLock) {
-      simNode.fx = null;
-      simNode.fy = null;
-    }
     draggedNodeId.current = undefined;
     simulation.current?.alpha(0.5).restart();
   };
