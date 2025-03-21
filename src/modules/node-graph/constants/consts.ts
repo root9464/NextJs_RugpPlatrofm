@@ -13,6 +13,7 @@ export function initialElements(): { nodes: CustomNodeType[]; edges: Edge[] } {
     y: center.y,
     data: { title: 'Wallet', subline: 'то откуда' },
     type: 'custom',
+    draggable: false,
   };
   nodes.push(mainNode);
 
