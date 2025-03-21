@@ -11,14 +11,14 @@ const SIMULATION_CONFIG = {
   linkDistance: 150,
   alphaDecay: 0.1,
   alphaMin: 0.001,
-  defaultSize: 100,
+  defaultSize: 180 * 2,
   mainNodeId: '1',
   velocityDecay: 0.4,
 };
 
 const configureSimulation = (nodes: CustomNodeType[], edges: Edge[], onTick: () => void): Simulation<CustomNodeType, Edge> => {
   const collisionRadius = (node: CustomNodeType) => {
-    const { width = SIMULATION_CONFIG.defaultSize, height = SIMULATION_CONFIG.defaultSize } = node.measured || {};
+    const { width = SIMULATION_CONFIG.defaultSize, height = SIMULATION_CONFIG.defaultSize } = node.measured ?? {};
     return Math.max(width, height) / 2 + SIMULATION_CONFIG.collidePadding;
   };
 

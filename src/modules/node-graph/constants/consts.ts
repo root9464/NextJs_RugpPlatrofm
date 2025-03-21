@@ -29,7 +29,7 @@ export function initialElements(): { nodes: CustomNodeType[]; edges: Edge[] } {
       position: { x, y },
       x,
       y,
-      data: { title: `Node ${i + 1}`, subline: `Subline ${i + 1}` },
+      data: { title: `Node ${i + 1}`, subline: `Subline ${i + 1}`, size: Math.random() * 100 + 50 },
       type: 'custom',
     };
     nodes.push(node);

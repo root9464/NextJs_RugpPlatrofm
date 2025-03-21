@@ -2,8 +2,6 @@
 import {
   addEdge,
   Controls,
-  MarkerType,
-  NodeMouseHandler,
   ReactFlow,
   useEdgesState,
   useNodesState,
@@ -21,8 +19,7 @@ import { useForceLayout } from '../hooks/useForceLayout';
 import { EdgeComponent } from '../slices/edge';
 import { NodeComponent, TurboNodeData } from '../slices/node';
 import '../style/style.css';
-
-const MAIN_NODE_ID = '1';
+import { calculateMainNodeSize, createNode } from '../utils/utils';
 
 export type CustomNodeType = {
   x: number;
@@ -45,6 +42,11 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
   type: 'custom',
   markerEnd: 'edge-circle',
 };
+const MIN_NODE_SIZE = 30;
+const MAX_NODE_SIZE = 180;
+const MAIN_NODE_ID = '1';
+
+const nodeOptions = { MAIN_NODE_ID, MIN_NODE_SIZE, MAX_NODE_SIZE };
 
 export const NodeGraph = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState<CustomNodeType>(initialNodes);
@@ -55,52 +57,38 @@ export const NodeGraph = () => {
 
   const onConnect: OnConnect = useCallback((params) => setEdges((els) => addEdge({ ...params, type: 'custom' }, els)), [setEdges]);
 
-  const addNodeToParent = useCallback(
-    (parentNode: CustomNodeType) => {
+  const onNodeClick = useCallback(
+    (clickedNode: CustomNodeType) => {
       if (!mainNode) return;
 
-      const newNodeId = `${Date.now()}`;
-      const parentCenterX = parentNode.position.x + (parentNode.measured?.width || 100) / 2;
-      const parentCenterY = parentNode.position.y + (parentNode.measured?.height || 100) / 2;
+      if (clickedNode.id === MAIN_NODE_ID) {
+        const { newNode, newEdge } = createNode(clickedNode, nodeOptions);
 
-      const isIncoming = Math.random() < 0.5;
-      const [sourceNodeId, targetNodeId] = isIncoming ? [newNodeId, parentNode.id] : [parentNode.id, newNodeId];
+        setNodes((prev) => {
+          const updatedNodes = [...prev, newNode];
+          const newMainSize = calculateMainNodeSize([...prev, newNode], [...edges, newEdge], nodeOptions);
+          return updatedNodes.map((node) => (node.id === MAIN_NODE_ID ? { ...node, data: { ...node.data, size: newMainSize } } : node));
+        });
+        setEdges((prev) => [...prev, newEdge]);
+        updateSimulation();
+      } else if (edges.some((e) => e.source === MAIN_NODE_ID && e.target === clickedNode.id)) {
+        const isChild = edges.some((e) => e.source === MAIN_NODE_ID && e.target === clickedNode.id);
+        const currentSize = clickedNode.data.size ?? 96;
 
-      const newNode: CustomNodeType = {
-        id: newNodeId,
-        position: { x: parentCenterX - 50, y: parentCenterY - 50 + 100 },
-        x: parentCenterX,
-        y: parentCenterY + 100,
-        data: {
-          title: 'New Node',
-          subline: isIncoming ? 'Incoming' : 'Outgoing',
-        },
-        type: 'custom',
-      };
+        if (isChild && currentSize < MAX_NODE_SIZE) {
+          setNodes((prev) => {
+            const updatedNodes = prev.map((node) =>
+              node.id === clickedNode.id ? { ...node, data: { ...node.data, size: Math.round(currentSize * 1.2) } } : node,
+            );
 
-      const newEdge: Edge = {
-        id: `e${sourceNodeId}-${targetNodeId}-${Date.now()}`,
-        source: sourceNodeId,
-        target: targetNodeId,
-        type: 'custom',
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: isIncoming ? '#FF0000' : '#00FF00',
-        },
-      };
+            const newMainSize = calculateMainNodeSize(updatedNodes, edges, nodeOptions);
 
-      setNodes((nds) => [...nds, newNode]);
-      setEdges((eds) => [...eds, newEdge]);
-      updateSimulation();
+            return updatedNodes.map((node) => (node.id === MAIN_NODE_ID ? { ...node, data: { ...node.data, size: newMainSize } } : node));
+          });
+        }
+      }
     },
-    [mainNode, setNodes, setEdges, updateSimulation],
-  );
-
-  const onNodeClick = useCallback<NodeMouseHandler>(
-    (_, clickedNode) => {
-      addNodeToParent(clickedNode as CustomNodeType);
-    },
-    [addNodeToParent],
+    [mainNode, edges, setNodes, setEdges, updateSimulation],
   );
 
   return (
@@ -109,7 +97,7 @@ export const NodeGraph = () => {
       edges={edges}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
-      onNodeClick={onNodeClick}
+      onNodeClick={(_, clickedNode) => onNodeClick(clickedNode as CustomNodeType)}
       onConnect={onConnect}
       onNodeDragStart={onNodeDragStart}
       onNodeDrag={(_, node) => onNodeDrag(node.position, node)}

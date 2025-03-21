@@ -10,14 +10,13 @@
 }
 
 .react-flow__node-custom {
-  border-radius: var(--node-border-radius);
-  display: flex;
-  height: 70px;
-  min-width: 150px;
   font-family: 'Fira Mono', Monospace;
   font-weight: 500;
   letter-spacing: -0.2px;
   box-shadow: var(--node-box-shadow);
+  border-radius: 100%;
+  width: fit-content;
+  height: fit-content;
 }
 
 .react-flow__handle.source {

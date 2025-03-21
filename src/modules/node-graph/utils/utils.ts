@@ -1,27 +1,22 @@
-import { InternalNode, Node, Position } from '@xyflow/react';
+import { Edge, InternalNode, MarkerType, Node, Position } from '@xyflow/react';
+import { CustomNodeType } from '../components/node-graph';
 
-const getNodeIntersection = (intersectionNode: InternalNode<Node>, targetNode: InternalNode<Node>) => {
-  const { width: intersectionNodeWidth = 0, height: intersectionNodeHeight = 0 } = intersectionNode.measured;
-  const intersectionNodePosition = intersectionNode.internals.positionAbsolute;
-  const targetPosition = targetNode.internals.positionAbsolute;
+const getNodeIntersection = (node: InternalNode<Node>, otherNode: InternalNode<Node>) => {
+  const nodeCenterX = node.internals.positionAbsolute.x + (node.measured.width ?? 0) / 2;
+  const nodeCenterY = node.internals.positionAbsolute.y + (node.measured.height ?? 0) / 2;
+  const otherCenterX = otherNode.internals.positionAbsolute.x + (otherNode.measured.width ?? 0) / 2;
+  const otherCenterY = otherNode.internals.positionAbsolute.y + (otherNode.measured.height ?? 0) / 2;
 
-  const w = intersectionNodeWidth / 2;
-  const h = intersectionNodeHeight / 2;
+  const dx = otherCenterX - nodeCenterX;
+  const dy = otherCenterY - nodeCenterY;
+  const angle = Math.atan2(dy, dx);
 
-  const x2 = intersectionNodePosition.x + w;
-  const y2 = intersectionNodePosition.y + h;
-  const x1 = targetPosition.x + (targetNode.measured.width ?? 0) / 2;
-  const y1 = targetPosition.y + (targetNode.measured.height ?? 0) / 2;
+  const nodeRadius = Math.min(node.measured.width ?? 0, node.measured.height ?? 0) / 2;
 
-  const xx1 = (x1 - x2) / (2 * w) - (y1 - y2) / (2 * h);
-  const yy1 = (x1 - x2) / (2 * w) + (y1 - y2) / (2 * h);
-  const a = 1 / (Math.abs(xx1) + Math.abs(yy1));
-  const xx3 = a * xx1;
-  const yy3 = a * yy1;
-  const x = w * (xx3 + yy3) + x2;
-  const y = h * (-xx3 + yy3) + y2;
+  const intersectionX = nodeCenterX + nodeRadius * Math.cos(angle);
+  const intersectionY = nodeCenterY + nodeRadius * Math.sin(angle);
 
-  return { x, y };
+  return { x: intersectionX, y: intersectionY };
 };
 
 const getEdgePosition = (node: InternalNode<Node>, intersectionPoint: { x: number; y: number }) => {
@@ -47,7 +42,7 @@ const getEdgePosition = (node: InternalNode<Node>, intersectionPoint: { x: numbe
   return Position.Top;
 };
 
-export const getEdgeParams = (source: InternalNode<Node>, target: InternalNode<Node>) => {
+const getEdgeParams = (source: InternalNode<Node>, target: InternalNode<Node>) => {
   const sourceIntersectionPoint = getNodeIntersection(source, target);
   const targetIntersectionPoint = getNodeIntersection(target, source);
 
@@ -63,3 +58,65 @@ export const getEdgeParams = (source: InternalNode<Node>, target: InternalNode<N
     targetPos,
   };
 };
+
+const createNode = (
+  clickedNode: CustomNodeType,
+  { MAIN_NODE_ID, MIN_NODE_SIZE, MAX_NODE_SIZE }: { MAIN_NODE_ID: string; MIN_NODE_SIZE: number; MAX_NODE_SIZE: number },
+) => {
+  const isMainNode = clickedNode.id === MAIN_NODE_ID;
+  const isIncoming = Math.random() < 0.5;
+
+  const nodeId = `${Date.now()}`;
+  const [source, target] = isMainNode ? (isIncoming ? [nodeId, MAIN_NODE_ID] : [MAIN_NODE_ID, nodeId]) : [null, null];
+
+  const measuredSize = {
+    width: clickedNode.measured?.width || 100,
+    height: clickedNode.measured?.height || 100,
+  };
+
+  const center = {
+    x: clickedNode.position.x + measuredSize.width / 2,
+    y: clickedNode.position.y + measuredSize.height / 2,
+  };
+
+  const newNode: CustomNodeType = {
+    id: nodeId,
+    position: { x: center.x - 50, y: center.y + 50 },
+    x: center.x,
+    y: center.y + 100,
+    data: {
+      title: 'New Node',
+      subline: isIncoming ? 'Incoming' : 'Outgoing',
+      size: Math.floor(Math.random() * (MAX_NODE_SIZE - MIN_NODE_SIZE) + MIN_NODE_SIZE),
+    },
+    type: 'custom',
+  };
+
+  const newEdge: Edge = {
+    id: `e${source}-${target}-${Date.now()}`,
+    source: source!,
+    target: target!,
+    type: 'custom',
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: isIncoming ? '#FF0000' : '#00FF00',
+    },
+  };
+
+  return { newNode, newEdge };
+};
+
+const calculateMainNodeSize = (
+  nodes: CustomNodeType[],
+  edges: Edge[],
+  { MAIN_NODE_ID, MIN_NODE_SIZE, MAX_NODE_SIZE }: { MAIN_NODE_ID: string; MIN_NODE_SIZE: number; MAX_NODE_SIZE: number },
+): number => {
+  const childNodes = nodes.filter((node) => edges.some((edge) => edge.source === MAIN_NODE_ID && edge.target === node.id));
+
+  if (childNodes.length === 0) return MIN_NODE_SIZE;
+  const product = childNodes.reduce((acc, node) => acc * (node.data.size ?? 96), 1);
+  const proportionalSize = product / childNodes.length;
+  return Math.max(MIN_NODE_SIZE, Math.min(MAX_NODE_SIZE, Math.round(proportionalSize)));
+};
+
+export { calculateMainNodeSize, createNode, getEdgeParams };
