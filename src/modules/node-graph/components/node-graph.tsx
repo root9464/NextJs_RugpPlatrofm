@@ -19,7 +19,7 @@ import { useForceLayout } from '../hooks/useForceLayout';
 import { EdgeComponent } from '../slices/edge';
 import { NodeComponent, TurboNodeData } from '../slices/node';
 import '../style/style.css';
-import { calculateMainNodeSize, createNode } from '../utils/utils';
+import { createNode } from '../utils/utils';
 
 export type CustomNodeType = {
   x: number;
@@ -60,33 +60,21 @@ export const NodeGraph = () => {
   const onNodeClick = useCallback(
     (clickedNode: CustomNodeType) => {
       if (!mainNode) return;
+      const isMainNode = clickedNode.id === MAIN_NODE_ID;
+      const isChild = edges.some((e) => e.source === MAIN_NODE_ID && e.target === clickedNode.id);
 
-      if (clickedNode.id === MAIN_NODE_ID) {
+      if (isMainNode) {
         const { newNode, newEdge } = createNode(clickedNode, nodeOptions);
-
-        setNodes((prev) => {
-          const updatedNodes = [...prev, newNode];
-          const newMainSize = calculateMainNodeSize([...prev, newNode], [...edges, newEdge], nodeOptions);
-          return updatedNodes.map((node) => (node.id === MAIN_NODE_ID ? { ...node, data: { ...node.data, size: newMainSize } } : node));
-        });
+        setNodes((prev) => [...prev, newNode]);
         setEdges((prev) => [...prev, newEdge]);
         updateSimulation();
-      } else if (edges.some((e) => e.source === MAIN_NODE_ID && e.target === clickedNode.id)) {
-        const isChild = edges.some((e) => e.source === MAIN_NODE_ID && e.target === clickedNode.id);
-        const currentSize = clickedNode.data.size ?? 96;
-
-        if (isChild && currentSize < MAX_NODE_SIZE) {
-          setNodes((prev) => {
-            const updatedNodes = prev.map((node) =>
-              node.id === clickedNode.id ? { ...node, data: { ...node.data, size: Math.round(currentSize * 1.2) } } : node,
-            );
-
-            const newMainSize = calculateMainNodeSize(updatedNodes, edges, nodeOptions);
-
-            return updatedNodes.map((node) => (node.id === MAIN_NODE_ID ? { ...node, data: { ...node.data, size: newMainSize } } : node));
-          });
-        }
+        return;
       }
+
+      if (!isChild) return;
+
+      const currentSize = clickedNode.data.size ?? 96;
+      setNodes((prev) => prev.map((node) => (node.id === clickedNode.id ? { ...node, data: { ...node.data, size: currentSize + 1 } } : node)));
     },
     [mainNode, edges, setNodes, setEdges, updateSimulation],
   );

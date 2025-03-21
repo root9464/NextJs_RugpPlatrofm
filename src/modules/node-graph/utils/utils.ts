@@ -106,17 +106,4 @@ const createNode = (
   return { newNode, newEdge };
 };
 
-const calculateMainNodeSize = (
-  nodes: CustomNodeType[],
-  edges: Edge[],
-  { MAIN_NODE_ID, MIN_NODE_SIZE, MAX_NODE_SIZE }: { MAIN_NODE_ID: string; MIN_NODE_SIZE: number; MAX_NODE_SIZE: number },
-): number => {
-  const childNodes = nodes.filter((node) => edges.some((edge) => edge.source === MAIN_NODE_ID && edge.target === node.id));
-
-  if (childNodes.length === 0) return MIN_NODE_SIZE;
-  const product = childNodes.reduce((acc, node) => acc * (node.data.size ?? 96), 1);
-  const proportionalSize = product / childNodes.length;
-  return Math.max(MIN_NODE_SIZE, Math.min(MAX_NODE_SIZE, Math.round(proportionalSize)));
-};
-
-export { calculateMainNodeSize, createNode, getEdgeParams };
+export { createNode, getEdgeParams };
