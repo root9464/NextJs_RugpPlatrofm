@@ -1,13 +1,14 @@
+'use client';
 import { Card } from '@components/ui/card';
 
 import { getMoscowISODate } from '@/shared/utils/utils';
-import { lazy, Suspense } from 'react';
-import { fetchPriceJettons } from './hooks/useGetBalance';
+import { lazy } from 'react';
+import { usePrice } from './hooks/useGetBalance';
 
 const BalanceChart = lazy(() => import('./components/chart').then((module) => ({ default: module.BalanceChart })));
 
-export const HistoryBalanceModule = async ({ address }: { address: string }) => {
-  const prices = await fetchPriceJettons(address ?? '');
+export const HistoryBalanceModule = ({ address }: { address: string }) => {
+  const { data: prices, isSuccess, isLoading } = usePrice(address ?? '');
   const chartData = {
     time: getMoscowISODate(),
     value: prices?.balanceInUsd ?? 0,
@@ -23,9 +24,8 @@ export const HistoryBalanceModule = async ({ address }: { address: string }) => 
           </div>
         </Card.Header>
         <Card.Content className='z-0 border-none px-0'>
-          <Suspense fallback={<p>Loading...</p>}>
-            <BalanceChart data={[chartData]} />
-          </Suspense>
+          {isSuccess && <BalanceChart data={[chartData]} />}
+          {isLoading && <p>Loading...</p>}
         </Card.Content>
       </Card>
     </div>

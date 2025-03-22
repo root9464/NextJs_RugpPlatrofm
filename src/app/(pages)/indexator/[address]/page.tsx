@@ -1,8 +1,8 @@
 import { PageLayout } from '@/components/layouts/page.layout';
 import { fetchUserBalance } from '@/modules/balance/hooks/useUserBalance';
 import { BalanceModule } from '@/modules/balance/module';
-import { HistoryBalanceModule } from '@/modules/history-balance/exports';
 import { fetchPriceJettons } from '@/modules/history-balance/hooks/useGetBalance';
+import { HistoryBalanceModule } from '@/modules/history-balance/module';
 import { HistoryTransactionsModule } from '@/modules/history-transactions/module';
 import { NodeGraphModule } from '@/modules/node-graph/exports';
 import { TimeLineModule } from '@/modules/timeline/module';
