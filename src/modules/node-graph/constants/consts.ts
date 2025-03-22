@@ -17,7 +17,7 @@ export function initialElements(): { nodes: CustomNodeType[]; edges: Edge[] } {
   };
   nodes.push(mainNode);
 
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 50; i++) {
     const degrees = i * (360 / 8);
     const radians = degrees * (Math.PI / 180);
     const radius = 250;

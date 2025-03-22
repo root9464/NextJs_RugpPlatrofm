@@ -81,8 +81,11 @@ export const NodeGraph = () => {
 
   return (
     <ReactFlow
+      fitView
+      zoomOnScroll
       nodes={nodes}
       edges={edges}
+      minZoom={0.1}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onNodeClick={(_, clickedNode) => onNodeClick(clickedNode as CustomNodeType)}
@@ -90,7 +93,6 @@ export const NodeGraph = () => {
       onNodeDragStart={onNodeDragStart}
       onNodeDrag={(_, node) => onNodeDrag(node.position, node)}
       onNodeDragStop={onNodeDragStop}
-      fitView
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       defaultEdgeOptions={defaultEdgeOptions}
