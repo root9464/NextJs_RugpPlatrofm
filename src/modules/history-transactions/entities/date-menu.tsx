@@ -6,8 +6,8 @@ import { Popover } from '@/components/ui/popover';
 export const DateMenu = () => {
   return (
     <Popover>
-      <Popover.Trigger className='h-fit w-max outline-none'>
-        <div className='bg-uiSecondaryBg h-14 w-[120px] rounded-lg px-4 py-2 text-start'>
+      <Popover.Trigger className='h-fit w-full outline-none'>
+        <div className='bg-uiSecondaryBg h-14 rounded-lg px-4 py-2 text-start'>
           <p className='text-uiPrimaryText text-xs'>Date/Memo</p>
           <p className='text-base text-white'>All</p>
         </div>

@@ -12,8 +12,8 @@ export const AssetsMenu = () => {
   const [selected, setSelected] = useState<Selection>(new Set(['bottom']));
   return (
     <Menu>
-      <Menu.Trigger className='h-fit w-max'>
-        <div className='bg-uiSecondaryBg h-14 w-[120px] rounded-lg px-4 py-2'>
+      <Menu.Trigger className='h-fit w-full'>
+        <div className='bg-uiSecondaryBg h-14 rounded-lg px-4 py-2'>
           <p className='text-uiPrimaryText text-xs'>Assets</p>
           <p className='text-base text-white'>All</p>
         </div>
