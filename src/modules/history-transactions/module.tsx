@@ -1,11 +1,10 @@
-'use client';
 import { FilterPanel } from './components/filter-panel';
 import { HistoryTransactionsHeader } from './components/header';
 import { HistoryPanel } from './components/history-panel';
-import { useTransactionsHistory } from './hooks/useGetTrHistory';
+import { getTransactionsHistory } from './hooks/useGetTrHistory';
 
-export const HistoryTransactionsModule = ({ address }: { address: string }) => {
-  const { data: transactionsData } = useTransactionsHistory(address);
+export const HistoryTransactionsModule = async ({ address }: { address: string }) => {
+  const transactionsData = await getTransactionsHistory(address);
 
   return (
     <div className='flex h-full w-full flex-col'>

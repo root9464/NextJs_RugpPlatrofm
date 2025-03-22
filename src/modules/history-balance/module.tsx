@@ -1,28 +1,13 @@
-'use client';
-
 import { Card } from '@components/ui/card';
-import Image from 'next/image';
-
-import { useFullscreenModal } from '@/components/fullscreen-modal';
-import { IndexatorModalLayouts } from '@/components/layouts/modal.layouts';
-
-import OpenFullSizeIco from '@assets/svg/fullsize.svg';
-import ScreenShotIco from '@assets/svg/screenshot.svg';
 
 import { getMoscowISODate } from '@/shared/utils/utils';
-import { lazy } from 'react';
-import { usePrice } from './hooks/useGetBalance';
+import { lazy, Suspense } from 'react';
+import { fetchPriceJettons } from './hooks/useGetBalance';
 
 const BalanceChart = lazy(() => import('./components/chart').then((module) => ({ default: module.BalanceChart })));
 
-export const HistoryBalanceModule = ({ address }: { address: string }) => {
-  const {
-    mount,
-    unmount,
-    modalState: { isOpen },
-  } = useFullscreenModal();
-
-  const { data: prices, isSuccess, isLoading } = usePrice(address ?? '');
+export const HistoryBalanceModule = async ({ address }: { address: string }) => {
+  const prices = await fetchPriceJettons(address ?? '');
   const chartData = {
     time: getMoscowISODate(),
     value: prices?.balanceInUsd ?? 0,
@@ -36,24 +21,11 @@ export const HistoryBalanceModule = ({ address }: { address: string }) => {
             <h2 className='text-xl font-bold'>Balance History</h2>
             <p className='text-uiPrimaryText'>10 Mar, 2023 - 30 Dec. 2023</p>
           </div>
-          <div className='flex items-center gap-2'>
-            <Image src={ScreenShotIco} alt='Screen Shot' width={20} height={20} />
-            <Image
-              src={OpenFullSizeIco}
-              alt='Open Full Size'
-              width={20}
-              height={20}
-              onClick={
-                isOpen
-                  ? unmount
-                  : (event) => mount(event, <IndexatorModalLayouts children_module={<HistoryBalanceModule address={address} />} />)
-              }
-            />
-          </div>
         </Card.Header>
         <Card.Content className='z-0 border-none px-0'>
-          {isSuccess && prices && <BalanceChart data={[chartData]} />}
-          {isLoading && <p>Loading...</p>}
+          <Suspense fallback={<p>Loading...</p>}>
+            <BalanceChart data={[chartData]} />
+          </Suspense>
         </Card.Content>
       </Card>
     </div>

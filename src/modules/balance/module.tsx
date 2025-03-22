@@ -26,7 +26,7 @@ const ITEMS = [
 export const BalanceModule = ({ address }: { address: string }) => {
   const { data: user_nfts, isSuccess: isSuccessNfts, isLoading: isLoadingNfts, isError: isErrorNfts, error: errorNfts } = useUserNft(address);
   const { data: user_balance } = useUserBalance(address);
-  const { data: prices } = usePrice(address ?? ''); // тут где то баг
+  const { data: prices } = usePrice(address ?? '');
 
   const tokenTableData = mapBalancesToTable(user_balance ?? [], prices?.jettonsPrices ?? []);
 

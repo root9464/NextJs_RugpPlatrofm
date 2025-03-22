@@ -1,3 +1,5 @@
+'use client';
+
 import {
   AreaSeries,
   AreaStyleOptions,
@@ -64,7 +66,7 @@ export const BalanceChart = ({ data }: { data: { time: string; value: number }[]
 
       chart.remove();
     };
-  }, [chartContainerRef]);
+  }, [chartContainerRef, data]);
 
   return <div ref={chartContainerRef} className='h-full w-full' />;
 };

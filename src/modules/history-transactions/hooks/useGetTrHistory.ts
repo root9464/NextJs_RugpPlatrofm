@@ -98,4 +98,5 @@ const useTransactionsHistory = (address: string) =>
     enabled: !!address,
   });
 
-export { useTransactionsHistory, type JettonTransferAction, type TonTransferAction, type TransactionAction, type TransactionData };
+export { getTransactionsHistory, useTransactionsHistory };
+export type { JettonTransferAction, TonTransferAction, TransactionAction, TransactionData };

@@ -46,14 +46,16 @@ const contentVariants = {
 };
 
 export const Sidebar = () => {
-  const { isOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <motion.div
       className='bg-uiSecondaryBg fixed top-0 left-0 z-[2] flex h-screen flex-col items-center overflow-hidden px-2.5 pt-4'
       variants={sidebarVariants}
       initial='closed'
-      animate={isOpen ? 'open' : 'closed'}>
+      animate={isOpen ? 'open' : 'closed'}
+      onMouseEnter={onOpen}
+      onMouseLeave={onClose}>
       <motion.div
         className='flex w-full flex-row items-center justify-between'
         animate={{
@@ -65,7 +67,7 @@ export const Sidebar = () => {
           stiffness: 200,
           damping: 25,
         }}>
-        <Image src={LogoIco} alt='logo' className='h-[57px] w-[57px] cursor-pointer' onClick={onOpenChange} />
+        <Image src={LogoIco} alt='logo' className='h-[57px] w-[57px] cursor-pointer' />
         <AnimatePresence>
           {isOpen && (
             <motion.h1

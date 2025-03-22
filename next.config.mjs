@@ -9,10 +9,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    optimizePackageImports: ['recharts, rxjs'],
+    optimizePackageImports: ['recharts, rxjs, @ton/core'],
     gzipSize: true,
+  
   },
-
   swcMinify: true,
   reactStrictMode: true,
 
@@ -38,7 +38,7 @@ const nextConfig = {
       ...config.experiments,
       topLevelAwait: true,
     };
-      
+        
     return config;
   },
 };
