@@ -62,16 +62,7 @@ export const Sidebar = () => {
           animate={{ paddingLeft: isOpen ? 8 : 0, paddingRight: isOpen ? 8 : 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}>
           <Image src={LogoIco} alt='logo' className='h-[57px] w-[57px] cursor-pointer' />
-          {isOpen && (
-            <motion.h1
-              className='text-base font-bold whitespace-nowrap select-none'
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.1 }}>
-              The platformer
-            </motion.h1>
-          )}
+          {isOpen && <h1 className='text-base font-bold whitespace-nowrap select-none'>The platformer</h1>}
         </motion.div>
       </AnimatePresence>
 
