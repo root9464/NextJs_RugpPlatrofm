@@ -97,7 +97,7 @@ export const NodeGraph = () => {
       edgeTypes={edgeTypes}
       defaultEdgeOptions={defaultEdgeOptions}
       className='bg-uiSecondaryBg'>
-      <Controls showInteractive={false} />
+      <Controls showInteractive={false} className='bg-uiSecondaryBg' />
       <svg>
         <defs>
           <linearGradient id='edge-gradient'>

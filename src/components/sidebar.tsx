@@ -56,36 +56,24 @@ export const Sidebar = () => {
       animate={isOpen ? 'open' : 'closed'}
       onMouseEnter={onOpen}
       onMouseLeave={onClose}>
-      <motion.div
-        className='flex w-full flex-row items-center justify-between'
-        animate={{
-          paddingLeft: isOpen ? 8 : 0,
-          paddingRight: isOpen ? 8 : 0,
-        }}
-        transition={{
-          type: 'spring',
-          stiffness: 200,
-          damping: 25,
-        }}>
-        <Image src={LogoIco} alt='logo' className='h-[57px] w-[57px] cursor-pointer' />
-        <AnimatePresence>
+      <AnimatePresence>
+        <motion.div
+          className='flex w-full flex-row items-center justify-between'
+          animate={{ paddingLeft: isOpen ? 8 : 0, paddingRight: isOpen ? 8 : 0 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 25 }}>
+          <Image src={LogoIco} alt='logo' className='h-[57px] w-[57px] cursor-pointer' />
           {isOpen && (
             <motion.h1
               className='text-base font-bold whitespace-nowrap select-none'
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              transition={{
-                type: 'spring',
-                stiffness: 200,
-                damping: 20,
-                delay: 0.1,
-              }}>
+              transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.1 }}>
               The platformer
             </motion.h1>
           )}
-        </AnimatePresence>
-      </motion.div>
+        </motion.div>
+      </AnimatePresence>
 
       <AnimatePresence>
         {isOpen && (
